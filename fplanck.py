@@ -13,26 +13,59 @@ drag = 6*np.pi*8e-4*50e-9
 
 xmax = 300*nm
 dx = 10*nm
-D = kT/drag
+D = kT/drag  # diffusion
+mu = 1/drag  # mobility
+
 
 X = np.arange(-xmax, xmax + dx, dx)
 
 K = 1e-6
 U = 0.5*K*X**2
+F = -K*X
 
-dU = np.roll(U, -1) - U
+L = 20*nm
+U = 5e-21*np.cos(X/L)
+F = 5e-21*np.sin(X/L)/L
+
+F = 5e-21*(np.sin(X/L))/L
+F = 5e-21*(np.sin(X/L) + 4)/L
+
+### Conservative forces
+# dU = np.roll(U, -1) - U
+# Rt = D/dx**2*np.exp(-dU/(2*kT))
+
+# dU = np.roll(U, 1) - U
+# Lt = D/dx**2*np.exp(-dU/(2*kT))
+
+### Non-conservative forces
+dU = -(np.roll(F, -1) + F)/2*dx
 Rt = D/dx**2*np.exp(-dU/(2*kT))
-Rt[-1] = 0
 
-dU = np.roll(U, 1) - U
+dU = (np.roll(F, 1) + F)/2*dx
 Lt = D/dx**2*np.exp(-dU/(2*kT))
+
+### Reflecting boundary condition
+Rt[-1] = 0
 Lt[0] = 0
+
+### Periodic boundary conditions
+dU = -F[-1]*dx
+Rt[-1] = D/dx**2*np.exp(-dU/(2*kT))
+
+dU = F[0]*dx
+Lt[0] = D/dx**2*np.exp(-dU/(2*kT))
 
 # N x N matrix, N = len(X)
 UP = Lt[1:]
 DIAG = -(Lt + Rt)
 DOWN = Rt[:-1]
+
+# Reflecting boundary conditions
 R = sparse.diags((DOWN, DIAG, UP), offsets=(-1,0,1), format='csc')
+
+# Periodic boundary conditions
+L = len(X) - 1
+R = sparse.diags((Lt[0], DOWN, DIAG, UP, Rt[-1]), offsets=(-L,-1,0,1,L), format='csc')
 
 w = 30*nm 
 Pi = np.exp(-(X - 100*nm)**2/w**2)
@@ -54,14 +87,19 @@ for N in np.linspace(100, 2000, 5):
 
 w, v = eigs(R, k=1, sigma=0, which='LM')
 steady = v[:,0].real
-ax.plot(X/nm, steady/np.sum(steady), color='k', ls='--')
+steady /= np.sum(steady)
+ax.plot(X/nm, steady, color='k', ls='--')
 ax.set(xlabel='x (nm)', ylabel='normalized PDF')
 
+fig, ax = plt.subplots()
+J = -(D*np.gradient(steady, dx) + mu*F*steady)
+ax.plot(X/nm, J)
 
 fig, ax = plt.subplots()
 from matplotlib.animation import FuncAnimation
 
-ax.plot(X/nm, steady/np.sum(steady), color='k', ls='--')
+ax.plot(X/nm, steady, color='k', ls='--', alpha=.5)
+ax.plot(X/nm, Pi, color='red', ls='--', alpha=.3)
 line, = ax.plot(X/nm, Pi, lw=2, color='C3')
 def update(i):
     Dt = 3e-6*i
@@ -70,7 +108,7 @@ def update(i):
 
     return [line]
 
-anim = FuncAnimation(fig, update, frames=range(0, 1000, 5), interval=30)
+anim = FuncAnimation(fig, update, frames=range(0, 1000, 3), interval=30)
 ax.set(xlabel='x (nm)', ylabel='normalized PDF')
 
 plt.show()
