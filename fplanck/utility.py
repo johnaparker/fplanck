@@ -3,11 +3,11 @@ import enum
 
 def value_to_vector(value, ndim, dtype=float):
     """convert a value to a vector in ndim"""
-
-    if np.isscalar(value):
+    value = np.asarray(value, dtype=dtype)
+    if value.ndim == 0:
         vec = np.asarray(np.repeat(value, ndim), dtype=dtype)
     else:
-        vec = np.asarray(vec, dtype=dtype)
+        vec = np.asarray(value)
         if vec.size != ndim:
             raise ValueError(f'input vector ({value}) does not have the correct dimensions (ndim = {ndim})')
 
@@ -21,5 +21,6 @@ def slice_idx(i, ndim, s0):
     return tuple(idx)
 
 class boundary(enum.Enum):
+    """enum for the types ofboundary conditions"""
     reflecting = enum.auto()
     periodic   = enum.auto()

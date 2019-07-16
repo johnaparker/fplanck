@@ -5,7 +5,7 @@ from scipy import sparse
 from scipy.sparse.linalg import expm, eigs, expm_multiply
 import enum
 import fplanck
-from fplanck.utility import value_to_vector, slice_idx
+from fplanck.utility import value_to_vector, slice_idx 
 
 class fokker_planck:
     def __init__(self, *, temperature, drag, extent, resolution,
@@ -32,7 +32,7 @@ class fokker_planck:
 
         self.potential = potential
         self.force = force
-        self.boundary = boundary
+        self.boundary = value_to_vector(boundary, self.ndim, dtype=object)
 
         self.diffusion = constants.k*self.temperature/self.drag
         self.mobility = 1/self.drag
@@ -77,24 +77,23 @@ class fokker_planck:
                 self.Rt[i] = self.diffusion[i]/self.resolution[i]**2
                 self.Lt[i] = self.diffusion[i]/self.resolution[i]**2
 
-        if boundary == fplanck.boundary.reflecting:
-            for i in range(self.ndim):
-                idx = slice_idx(i, self.ndim, -1)
-                self.Rt[i][idx] = 0
+        for i in range(self.ndim):
+            if self.boundary[i] == fplanck.boundary.reflecting:
+                    idx = slice_idx(i, self.ndim, -1)
+                    self.Rt[i][idx] = 0
 
-                idx = slice_idx(i, self.ndim, 0)
-                self.Lt[i][idx] = 0
-        elif boundary == fplanck.boundary.periodic:
-            for i in range(self.ndim):
-                idx = slice_idx(i, self.ndim, -1)
-                dU = -self.force_values[i][idx]*self.resolution[i]
-                self.Rt[i][idx] = self.diffusion[i]/self.resolution[i]**2*np.exp(-self.beta[i]*dU/2)
+                    idx = slice_idx(i, self.ndim, 0)
+                    self.Lt[i][idx] = 0
+            elif self.boundary[i] == fplanck.boundary.periodic:
+                    idx = slice_idx(i, self.ndim, -1)
+                    dU = -self.force_values[i][idx]*self.resolution[i]
+                    self.Rt[i][idx] = self.diffusion[i]/self.resolution[i]**2*np.exp(-self.beta[i]*dU/2)
 
-                idx = slice_idx(i, self.ndim, 0)
-                dU = self.force_values[i][idx]*self.resolution[i]
-                self.Lt[i][idx] = self.diffusion[i]/self.resolution[i]**2*np.exp(-self.beta[i]*dU/2)
-        else:
-            raise ValueError(f"'{boundary}' is not a valid a boundary condition")
+                    idx = slice_idx(i, self.ndim, 0)
+                    dU = self.force_values[i][idx]*self.resolution[i]
+                    self.Lt[i][idx] = self.diffusion[i]/self.resolution[i]**2*np.exp(-self.beta[i]*dU/2)
+            else:
+                raise ValueError(f"'{self.boundary[i]}' is not a valid a boundary condition")
 
         self._build_matrix()
 
