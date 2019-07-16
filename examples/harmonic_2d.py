@@ -12,7 +12,7 @@ drag = 6*np.pi*viscosity*radius
 K = 1e-6
 U = lambda x, y: 0.5*K*(x**2 + y**2)
 sim = fokker_planck(temperature=300, drag=drag, extent=[600*nm, 600*nm],
-            resolution=10*nm, boundary='periodic', potential=U)
+            resolution=10*nm, boundary='reflecting', potential=U)
 
 steady = sim.steady_state()
 
@@ -32,7 +32,7 @@ p0 /= np.sum(p0)
 
 fig, ax = plt.subplots()
 
-Pt = sim.propagate(Pi, 20000e-7)
+# Pt = sim.propagate(Pi, 8000e-7)
 ax.pcolormesh(*sim.grid/nm, steady)
 ax.set_aspect('equal')
 # ax.plot(sim.grid[0]/nm, p0, color='red', ls='--', alpha=.3)

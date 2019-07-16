@@ -132,9 +132,9 @@ class fokker_planck:
 
         for i in range(N):
             idx = np.unravel_index(i, self.Ngrid)
-            R[idx][idx] = -(np.sum(self.Rt[:,idx]) + np.sum(self.Lt[:,idx]))
-
             for j in range(self.ndim):
+                R[idx][idx] -= self.Rt[j][idx] + self.Lt[j][idx]
+
                 jdx = list(idx)
                 jdx[j] = (jdx[j] + 1) % self.Ngrid[j]
                 jdx = tuple(jdx)
