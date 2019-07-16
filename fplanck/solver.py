@@ -20,7 +20,7 @@ class fokker_planck:
             resolution      spatial resolution of the grid (scalar or vector)
             potential       external potential function, U(ndim -> scalar)
             force           external force function, F(ndim -> ndim)
-            boundary        type of boundary condition (default: reflecting)
+            boundary        type of boundary condition (scalar or vector, default: reflecting)
         """
 
         self.extent = np.atleast_1d(extent)
@@ -146,7 +146,7 @@ class fokker_planck:
         return steady
 
     def propagate(self, initial, time, normalize=True):
-        """Propagte an initial probability distribution in time
+        """Propagate an initial probability distribution in time
 
         Arguments:
             initial      initial probability density function
@@ -161,6 +161,31 @@ class fokker_planck:
         pf = expm_multiply(self.master_matrix*time, p0.flatten())
 
         return pf.reshape(self.Ngrid)
+
+    def propagate_interval(self, initial, tf, Nsteps=None, dt=None, normalize=True):
+        """Propagate an initial probability distribution over a time interval, return time and the property distribution at each time-step
+
+        Arguments:
+            initial      initial probability density function
+            tf           stop time (inclusive)
+            Nsteps       number of time-steps (specifiy Nsteps or dt)
+            dt           length of time-steps (specifiy Nsteps or dt)
+            normalize    if True, normalize the initial probability
+        """
+        p0 = initial(*self.grid)
+        if normalize:
+            p0 /= np.sum(p0)
+
+        if Nsteps is not None:
+            dt = tf/Nsteps
+        elif dt is not None:
+            Nsteps = np.ceil(tf/dt).astype(int)
+        else:
+            raise ValueError('specifiy either Nsteps or Nsteps')
+
+        time = np.linspace(0, tf, Nsteps)
+        pf = expm_multiply(self.master_matrix, p0.flatten(), start=0, stop=tf, num=Nsteps, endpoint=True)
+        return time, pf.reshape((pf.shape[0],) + tuple(self.Ngrid))
 
     def probability_current(self):
         """Obtain the probability current of the current probability state"""

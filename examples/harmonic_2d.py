@@ -15,8 +15,6 @@ U = lambda x, y: 0.5*K*(x**2 + y**2)
 sim = fokker_planck(temperature=300, drag=drag, extent=[600*nm, 600*nm],
             resolution=10*nm, boundary=boundary.reflecting, potential=U)
 
-steady = sim.steady_state()
-
 w = 30*nm
 x0 = -150*nm
 y0 = -150*nm
@@ -28,17 +26,20 @@ fig, ax = plt.subplots(subplot_kw=dict(projection='3d'), constrained_layout=True
 
 surf = ax.plot_surface(*sim.grid/nm, p0, cmap='viridis')
 
+Nsteps = 200
+time, Pt = sim.propagate_interval(Pi, 2e-3, Nsteps=Nsteps)
+
+ax.set_zlim([0,np.max(Pt)/3])
+ax.autoscale(False)
+
 def update(i):
     global surf
-
-    time = 3e-6*i
-    Pt = sim.propagate(Pi, time)
     surf.remove()
-    surf = ax.plot_surface(*sim.grid/nm, Pt, cmap='viridis')
+    surf = ax.plot_surface(*sim.grid/nm, Pt[i], cmap='viridis')
 
     return [surf]
 
-anim = FuncAnimation(fig, update, frames=range(0, 1000, 9), interval=30)
+anim = FuncAnimation(fig, update, frames=range(Nsteps), interval=30)
 ax.set(xlabel='x (nm)', ylabel='y (nm)', zlabel='normalized PDF')
 
 plt.show()
