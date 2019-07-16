@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
 from fplanck import fokker_planck
+from mpl_toolkits.mplot3d import Axes3D
 
 nm = 1e-9
 viscosity = 8e-4
@@ -20,33 +21,24 @@ w = 30*nm
 x0 = -150*nm
 y0 = -150*nm
 Pi = lambda x, y: np.exp(-((x - x0)**2 + (y - y0)**2)/w**2)
-# def Pi(x, y):
-    # p0 = np.zeros_like(x)
-    # r = np.sqrt((x - 150*nm)**2 + (y - 150*nm)**2)
-    # idx = r < 40*nm
-    # p0[idx] = 1
-    # return p0
-
 p0 = Pi(*sim.grid)
 p0 /= np.sum(p0)
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(subplot_kw=dict(projection='3d'), constrained_layout=True)
 
-# Pt = sim.propagate(Pi, 8000e-7)
-ax.pcolormesh(*sim.grid/nm, steady)
-ax.set_aspect('equal')
-# ax.plot(sim.grid[0]/nm, p0, color='red', ls='--', alpha=.3)
-# line, = ax.plot(sim.grid[0]/nm, p0, lw=2, color='C3')
+surf = ax.plot_surface(*sim.grid/nm, p0, cmap='viridis')
 
-# def update(i):
-    # time = 3e-6*i
-    # Pt = sim.propagate(Pi, time)
-    # line.set_ydata(Pt)
+def update(i):
+    global surf
 
-    # return [line]
+    time = 3e-6*i
+    Pt = sim.propagate(Pi, time)
+    surf.remove()
+    surf = ax.plot_surface(*sim.grid/nm, Pt, cmap='viridis')
 
-# anim = FuncAnimation(fig, update, frames=range(0, 1000, 3), interval=30)
-# ax.set(xlabel='x (nm)', ylabel='normalized PDF')
-# ax.margins(x=0)
+    return [surf]
+
+anim = FuncAnimation(fig, update, frames=range(0, 1000, 9), interval=30)
+ax.set(xlabel='x (nm)', ylabel='y (nm)', zlabel='normalized PDF')
 
 plt.show()
