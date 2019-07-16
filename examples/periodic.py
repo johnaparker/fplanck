@@ -30,14 +30,15 @@ ax.plot(sim.grid[0]/nm, steady, color='k', ls='--', alpha=.5)
 ax.plot(sim.grid[0]/nm, p0, color='red', ls='--', alpha=.3)
 line, = ax.plot(sim.grid[0]/nm, p0, lw=2, color='C3')
 
-def update(i):
-    time = 6e-6*i
-    Pt = sim.propagate(Pi, time)
-    line.set_ydata(Pt)
+Nsteps = 200
+time, Pt = sim.propagate_interval(Pi, 10e-3, Nsteps=Nsteps)
 
+def update(i):
+    line.set_ydata(Pt[i])
     return [line]
 
-anim = FuncAnimation(fig, update, frames=range(0, 1000, 3), interval=30)
+
+anim = FuncAnimation(fig, update, frames=range(Nsteps), interval=30)
 ax.set(xlabel='x (nm)', ylabel='normalized PDF')
 ax.margins(x=0)
 
