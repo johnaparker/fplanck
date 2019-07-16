@@ -94,7 +94,7 @@ class fokker_planck:
                 self.Rt[i] = self.diffusion[i]/self.resolution[i]**2
                 self.Lt[i] = self.diffusion[i]/self.resolution[i]**2
 
-        if boundary is 'reflecting':
+        if boundary == 'reflecting':
             for i in range(self.ndim):
                 idx = slice_idx(i, self.ndim, -1)
                 self.Rt[i][idx] = 0
@@ -138,12 +138,12 @@ class fokker_planck:
                 jdx = list(idx)
                 jdx[j] = (jdx[j] + 1) % self.Ngrid[j]
                 jdx = tuple(jdx)
-                R[idx][jdx] =  self.Lt[j,jdx]
+                R[idx][jdx] =  self.Lt[j][jdx]
 
                 jdx = list(idx)
                 jdx[j] = (jdx[j] - 1) % self.Ngrid[j]
                 jdx = tuple(jdx)
-                R[idx][jdx] =  self.Rt[j,jdx]
+                R[idx][jdx] =  self.Rt[j][jdx]
 
         self.master_matrix = sparse.csc_matrix(R.reshape([N,N]))
 
@@ -163,12 +163,12 @@ class fokker_planck:
             time         amount of time to propagate
             normalize    if True, normalize the initial probability
         """
-        p0 = initial(self.grid)
+        p0 = initial(*self.grid)
         if normalize:
             p0 /= np.sum(p0)
 
-        pf = expm(self.master_matrix*time) @ p0.flatten()
-        # pf = expm_multiply(self.master_matrix*time, p0.flatten())
+        # pf = expm(self.master_matrix*time) @ p0.flatten()
+        pf = expm_multiply(self.master_matrix*time, p0.flatten())
 
         return pf.reshape(self.Ngrid)
 
