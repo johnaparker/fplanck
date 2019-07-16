@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck
+from fplanck import fokker_planck, boundary
 
 nm = 1e-9
 viscosity = 8e-4
@@ -13,7 +13,7 @@ L = 20*nm
 
 U = lambda x: 5e-21*np.cos(x/L)
 sim = fokker_planck(temperature=300, drag=drag, extent=600*nm,
-            resolution=10*nm, boundary='reflecting', potential=U)
+            resolution=10*nm, boundary=boundary.reflecting, potential=U)
 
 steady = sim.steady_state()
 

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck
+from fplanck import fokker_planck, boundary
 from mpl_toolkits.mplot3d import Axes3D
 
 nm = 1e-9
@@ -13,7 +13,7 @@ drag = 6*np.pi*viscosity*radius
 K = 1e-6
 U = lambda x, y: 0.5*K*(x**2 + y**2)
 sim = fokker_planck(temperature=300, drag=drag, extent=[600*nm, 600*nm],
-            resolution=10*nm, boundary='reflecting', potential=U)
+            resolution=10*nm, boundary=boundary.reflecting, potential=U)
 
 steady = sim.steady_state()
 

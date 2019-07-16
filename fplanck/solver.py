@@ -3,30 +3,13 @@ from scipy import constants
 from scipy.linalg import expm
 from scipy import sparse
 from scipy.sparse.linalg import expm, eigs, expm_multiply
-
-
-def value_to_vector(value, ndim, dtype=float):
-    """convert a value to a vector in ndim"""
-
-    if np.isscalar(value):
-        vec = np.asarray(np.repeat(value, ndim), dtype=dtype)
-    else:
-        vec = np.asarray(vec, dtype=dtype)
-        if vec.size != ndim:
-            raise ValueError(f'input vector ({value}) does not have the correct dimensions (ndim = {ndim})')
-
-    return vec
-
-def slice_idx(i, ndim, s0):
-    """return a boolean array for a ndim-1 slice along the i'th axis at value s0"""
-    idx = [slice(None)]*ndim
-    idx[i] = s0
-
-    return tuple(idx)
+import enum
+import fplanck
+from fplanck.utility import value_to_vector, slice_idx
 
 class fokker_planck:
     def __init__(self, *, temperature, drag, extent, resolution,
-            potential=None, force=None, boundary='reflecting'):
+            potential=None, force=None, boundary=fplanck.boundary.reflecting):
         """
         Solve the Fokker-Planck equation
 
@@ -94,14 +77,14 @@ class fokker_planck:
                 self.Rt[i] = self.diffusion[i]/self.resolution[i]**2
                 self.Lt[i] = self.diffusion[i]/self.resolution[i]**2
 
-        if boundary == 'reflecting':
+        if boundary == fplanck.boundary.reflecting:
             for i in range(self.ndim):
                 idx = slice_idx(i, self.ndim, -1)
                 self.Rt[i][idx] = 0
 
                 idx = slice_idx(i, self.ndim, 0)
                 self.Lt[i][idx] = 0
-        elif boundary == 'periodic':
+        elif boundary == fplanck.boundary.periodic:
             for i in range(self.ndim):
                 idx = slice_idx(i, self.ndim, -1)
                 dU = -self.force_values[i][idx]*self.resolution[i]
