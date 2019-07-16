@@ -193,6 +193,6 @@ class fokker_planck:
         J = np.zeros_like(self.force_values)
         for i in range(self.ndim):
             J[i] = -(self.diffusion[i]*np.gradient(steady, self.resolution[i], axis=i) 
-                  + self.mobility[i]*self.force_values[i]*steady)
+                  - self.mobility[i]*self.force_values[i]*steady)
 
         return J

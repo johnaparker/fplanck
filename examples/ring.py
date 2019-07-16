@@ -56,14 +56,20 @@ def update(i):
 anim = FuncAnimation(fig, update, frames=range(Nsteps), interval=30)
 ax1.set(xlabel='x (nm)', ylabel='y (nm)', zlabel='normalized PDF')
 
+steady = sim.steady_state()
 current = sim.probability_current()
 
 ax2 = fig.add_subplot(1,2,2)
 
 skip = 5
 idx = np.s_[::skip, ::skip]
+ax2.pcolormesh(*sim.grid/nm, steady)
 ax2.quiver(sim.grid[0][idx]/nm, sim.grid[1][idx]/nm, 
         current[0][idx], current[1][idx], pivot='mid')
+
+xmax = 400
+ax2.set_xlim([-xmax, xmax])
+ax2.set_ylim([-xmax, xmax])
 
 plt.tight_layout()
 
