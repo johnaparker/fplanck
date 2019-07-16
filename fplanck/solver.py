@@ -163,7 +163,7 @@ class fokker_planck:
         return pf.reshape(self.Ngrid)
 
     def propagate_interval(self, initial, tf, Nsteps=None, dt=None, normalize=True):
-        """Propagate an initial probability distribution over a time interval, return time and the property distribution at each time-step
+        """Propagate an initial probability distribution over a time interval, return time and the probability distribution at each time-step
 
         Arguments:
             initial      initial probability density function
