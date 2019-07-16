@@ -21,14 +21,14 @@ w = 30*nm
 x0 = -150*nm
 Pi = lambda x: np.exp(-(x - x0)**2/w**2)
 
-p0 = Pi(sim.grid)
+p0 = Pi(sim.grid[0])
 p0 /= np.sum(p0)
 
 fig, ax = plt.subplots()
 
-ax.plot(sim.grid/nm, steady, color='k', ls='--', alpha=.5)
-ax.plot(sim.grid/nm, p0, color='red', ls='--', alpha=.3)
-line, = ax.plot(sim.grid/nm, p0, lw=2, color='C3')
+ax.plot(sim.grid[0]/nm, steady, color='k', ls='--', alpha=.5)
+ax.plot(sim.grid[0]/nm, p0, color='red', ls='--', alpha=.3)
+line, = ax.plot(sim.grid[0]/nm, p0, lw=2, color='C3')
 
 def update(i):
     time = 3e-6*i
