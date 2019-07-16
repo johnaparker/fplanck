@@ -117,35 +117,43 @@ class fokker_planck:
 
     def _build_matrix(self):
         """build master equation matrix"""
-        # UP = self.Lt[1:]
-        # DIAG = -(self.Lt + self.Rt)
-        # DOWN = self.Rt[:-1]
-
-        # if self.boundary == 'reflecting':
-            # R = sparse.diags((DOWN, DIAG, UP), offsets=(-1,0,1), format='csc')
-        # elif self.boundary == 'periodic':
-            # L = self.Ngrid - 1
-            # R = sparse.diags((self.Lt[0], DOWN, DIAG, UP, self.Rt[-1]), offsets=(-L,-1,0,1,L), format='csc')
-
-        R = np.zeros([*self.Ngrid, *self.Ngrid], dtype=float)
         N = np.product(self.Ngrid)
 
+        size = N*(1 + 2*self.ndim)
+        data = np.zeros(size, dtype=float)
+        row  = np.zeros(size, dtype=int)
+        col  = np.zeros(size, dtype=int)
+
+        counter = 0
         for i in range(N):
             idx = np.unravel_index(i, self.Ngrid)
-            for j in range(self.ndim):
-                R[idx][idx] -= self.Rt[j][idx] + self.Lt[j][idx]
+            data[counter] = -sum([self.Rt[n][idx] + self.Lt[n][idx]  for n in range(self.ndim)])
+            row[counter] = i
+            col[counter] = i
+            counter += 1
+
+            for n in range(self.ndim):
+                jdx = list(idx)
+                jdx[n] = (jdx[n] + 1) % self.Ngrid[n]
+                jdx = tuple(jdx)
+                j = np.ravel_multi_index(jdx, self.Ngrid)
+
+                data[counter] = self.Lt[n][jdx]
+                row[counter] = i
+                col[counter] = j
+                counter += 1
 
                 jdx = list(idx)
-                jdx[j] = (jdx[j] + 1) % self.Ngrid[j]
+                jdx[n] = (jdx[n] - 1) % self.Ngrid[n]
                 jdx = tuple(jdx)
-                R[idx][jdx] =  self.Lt[j][jdx]
+                j = np.ravel_multi_index(jdx, self.Ngrid)
 
-                jdx = list(idx)
-                jdx[j] = (jdx[j] - 1) % self.Ngrid[j]
-                jdx = tuple(jdx)
-                R[idx][jdx] =  self.Rt[j][jdx]
+                data[counter] = self.Rt[n][jdx]
+                row[counter] = i
+                col[counter] = j
+                counter += 1
 
-        self.master_matrix = sparse.csc_matrix(R.reshape([N,N]))
+        self.master_matrix = sparse.csc_matrix((data, (row, col)), shape=(N,N))
 
     def steady_state(self):
         """Obtain the steady state solution"""
