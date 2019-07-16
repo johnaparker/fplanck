@@ -46,31 +46,36 @@ time, Pt = sim.propagate_interval(Pi, 20e-3, Nsteps=Nsteps)
 ax1.set_zlim([0,np.max(Pt)/5])
 ax1.autoscale(False)
 
-def update(i):
-    global surf
-    surf.remove()
-    surf = ax1.plot_surface(*sim.grid/nm, Pt[i], cmap='viridis')
-
-    return [surf]
-
-anim = FuncAnimation(fig, update, frames=range(Nsteps), interval=30)
 ax1.set(xlabel='x (nm)', ylabel='y (nm)', zlabel='normalized PDF')
-
-steady = sim.steady_state()
-current = sim.probability_current()
 
 ax2 = fig.add_subplot(1,2,2)
 
 skip = 5
 idx = np.s_[::skip, ::skip]
-ax2.pcolormesh(*sim.grid/nm, steady)
-ax2.quiver(sim.grid[0][idx]/nm, sim.grid[1][idx]/nm, 
+im = ax2.pcolormesh(*sim.grid/nm, p0, vmax=np.max(Pt)/5)
+current = sim.probability_current(p0)
+arrows = ax2.quiver(sim.grid[0][idx]/nm, sim.grid[1][idx]/nm, 
         current[0][idx], current[1][idx], pivot='mid')
 
 xmax = 400
 ax2.set_xlim([-xmax, xmax])
 ax2.set_ylim([-xmax, xmax])
 
+def update(i):
+    global surf
+    surf.remove()
+    surf = ax1.plot_surface(*sim.grid/nm, Pt[i], cmap='viridis')
+
+    data = Pt[i, :-1,:-1]
+    im.set_array(np.ravel(data))
+    im.set_clim(vmax=np.max(data))
+
+
+    current = sim.probability_current(Pt[i])
+    arrows.set_UVC(current[0][idx], current[1][idx])
+    return [surf, im, arrows]
+
+anim = FuncAnimation(fig, update, frames=range(Nsteps), interval=30)
 plt.tight_layout()
 
 plt.show()

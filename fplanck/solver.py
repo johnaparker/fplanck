@@ -187,12 +187,11 @@ class fokker_planck:
         pf = expm_multiply(self.master_matrix, p0.flatten(), start=0, stop=tf, num=Nsteps, endpoint=True)
         return time, pf.reshape((pf.shape[0],) + tuple(self.Ngrid))
 
-    def probability_current(self):
-        """Obtain the probability current of the current probability state"""
-        steady = self.steady_state()
+    def probability_current(self, pdf):
+        """Obtain the probability current of the given probability distribution"""
         J = np.zeros_like(self.force_values)
         for i in range(self.ndim):
-            J[i] = -(self.diffusion[i]*np.gradient(steady, self.resolution[i], axis=i) 
-                  - self.mobility[i]*self.force_values[i]*steady)
+            J[i] = -(self.diffusion[i]*np.gradient(pdf, self.resolution[i], axis=i) 
+                  - self.mobility[i]*self.force_values[i]*pdf)
 
         return J
