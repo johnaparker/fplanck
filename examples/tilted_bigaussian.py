@@ -2,20 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck, boundary, gaussian_pdf, combine
-from functools import partial
+from fplanck import fokker_planck, boundary, gaussian_pdf, gaussian_potential, combine
 
 nm = 1e-9
 viscosity = 8e-4
 radius = 50*nm
 drag = 6*np.pi*viscosity*radius
 
-def gaussian_potential(x, x0, w):
-    return -1.8e-20*np.exp(-(x - x0)**2/w**2)
-
 W = 60*nm
-U = combine(partial(gaussian_potential, x0=150*nm, w=W),
-            partial(gaussian_potential, x0=-150*nm, w=W),
+A = 1.8e-20
+U = combine(gaussian_potential(center=150*nm, width=W, amplitude=A),
+            gaussian_potential(center=-150*nm, width=W, amplitude=A),
             lambda x: -2e-14*x)
 
 sim = fokker_planck(temperature=300, drag=drag, extent=600*nm,
