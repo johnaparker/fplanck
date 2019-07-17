@@ -1,5 +1,6 @@
 import numpy as np
 import enum
+from inspect import getfullargspec
 
 def value_to_vector(value, ndim, dtype=float):
     """convert a value to a vector in ndim"""
@@ -35,3 +36,15 @@ class boundary(enum.Enum):
     """enum for the types ofboundary conditions"""
     reflecting = enum.auto()
     periodic   = enum.auto()
+
+def vectorize_force(f):
+    """decorator to vectorize a force function"""
+    ndim = len(getfullargspec(f).args)
+    signature = ','.join(['()']*ndim)
+    signature += '->(N)'
+
+    vec_f = np.vectorize(f, signature=signature)
+    def new_func(*args):
+        return np.rollaxis(vec_f(*args), axis=-1, start=0)
+
+    return new_func
