@@ -10,9 +10,6 @@ viscosity = 8e-4
 radius = 50*nm
 drag = 6*np.pi*viscosity*radius
 
-K = 1e-6
-F = lambda x, y: -K*np.array([x,y])
-
 def F(x, y):
     rad = np.sqrt(x**2 + y**2)
     phi = np.arctan2(y, x)

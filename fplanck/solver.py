@@ -145,20 +145,23 @@ class fokker_planck:
 
         return steady
 
-    def propagate(self, initial, time, normalize=True):
+    def propagate(self, initial, time, normalize=True, dense=False):
         """Propagate an initial probability distribution in time
 
         Arguments:
             initial      initial probability density function
             time         amount of time to propagate
             normalize    if True, normalize the initial probability
+            dense        if True, use dense method of expm (might be faster, at memory cost)
         """
         p0 = initial(*self.grid)
         if normalize:
             p0 /= np.sum(p0)
 
-        # pf = expm(self.master_matrix*time) @ p0.flatten()
-        pf = expm_multiply(self.master_matrix*time, p0.flatten())
+        if dense:
+            pf = expm(self.master_matrix*time) @ p0.flatten()
+        else:
+            pf = expm_multiply(self.master_matrix*time, p0.flatten())
 
         return pf.reshape(self.Ngrid)
 
