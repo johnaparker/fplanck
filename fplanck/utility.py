@@ -20,6 +20,17 @@ def slice_idx(i, ndim, s0):
 
     return tuple(idx)
 
+def combine(*funcs):
+    """combine a collection of functions into a single function (for probability, potential, and force functions)"""
+    def combined_func(*args):
+        values = funcs[0](*args)
+        for func in funcs[1:]:
+            values += func(*args)
+
+        return values
+
+    return combined_func
+
 class boundary(enum.Enum):
     """enum for the types ofboundary conditions"""
     reflecting = enum.auto()
