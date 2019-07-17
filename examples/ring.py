@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck, boundary
+from fplanck import fokker_planck, boundary, gaussian_pdf
 from mpl_toolkits.mplot3d import Axes3D
 
 nm = 1e-9
@@ -25,20 +25,18 @@ def F(x, y):
 sim = fokker_planck(temperature=300, drag=drag, extent=[800*nm, 800*nm],
             resolution=10*nm, boundary=boundary.reflecting, force=F)
 
-w = 30*nm
-x0 = -150*nm
-y0 = -150*nm
-Pi = lambda x, y: np.exp(-((x - x0)**2 + (y - y0)**2)/w**2)
-p0 = Pi(*sim.grid)
-p0 /= np.sum(p0)
+### time-evolved solution
+pdf = gaussian_pdf(center=(-150*nm, -150*nm), width=30*nm)
+p0 = pdf(*sim.grid)
 
+Nsteps = 200
+time, Pt = sim.propagate_interval(pdf, 20e-3, Nsteps=Nsteps)
+
+### animation
 fig = plt.figure(figsize=plt.figaspect(1/2))
 ax1 = fig.add_subplot(1,2,1, projection='3d')
 
 surf = ax1.plot_surface(*sim.grid/nm, p0, cmap='viridis')
-
-Nsteps = 200
-time, Pt = sim.propagate_interval(Pi, 20e-3, Nsteps=Nsteps)
 
 ax1.set_zlim([0,np.max(Pt)/5])
 ax1.autoscale(False)
@@ -66,7 +64,6 @@ def update(i):
     data = Pt[i, :-1,:-1]
     im.set_array(np.ravel(data))
     im.set_clim(vmax=np.max(data))
-
 
     current = sim.probability_current(Pt[i])
     arrows.set_UVC(current[0][idx], current[1][idx])

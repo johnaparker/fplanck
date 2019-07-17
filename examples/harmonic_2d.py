@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck, boundary
+from fplanck import fokker_planck, boundary, gaussian_pdf
 from mpl_toolkits.mplot3d import Axes3D
 
 nm = 1e-9
@@ -15,19 +15,17 @@ U = lambda x, y: 0.5*K*(x**2 + y**2)
 sim = fokker_planck(temperature=300, drag=drag, extent=[600*nm, 600*nm],
             resolution=10*nm, boundary=boundary.reflecting, potential=U)
 
-w = 30*nm
-x0 = -150*nm
-y0 = -150*nm
-Pi = lambda x, y: np.exp(-((x - x0)**2 + (y - y0)**2)/w**2)
-p0 = Pi(*sim.grid)
-p0 /= np.sum(p0)
+### time-evolved solution
+pdf = gaussian_pdf(center=(-150*nm, -150*nm), width=30*nm)
+p0 = pdf(*sim.grid)
 
+Nsteps = 200
+time, Pt = sim.propagate_interval(pdf, 2e-3, Nsteps=Nsteps)
+
+### animation
 fig, ax = plt.subplots(subplot_kw=dict(projection='3d'), constrained_layout=True)
 
 surf = ax.plot_surface(*sim.grid/nm, p0, cmap='viridis')
-
-Nsteps = 200
-time, Pt = sim.propagate_interval(Pi, 2e-3, Nsteps=Nsteps)
 
 ax.set_zlim([0,np.max(Pt)/3])
 ax.autoscale(False)
