@@ -3,6 +3,7 @@ pre-defined convenience potential functions
 """
 import numpy as np
 from fplanck.utility import value_to_vector
+from scipy.interpolate import RegularGridInterpolator
 
 def harmonic_potential(center, k):
     """A harmonic potential
@@ -64,5 +65,22 @@ def uniform_potential(func, U0):
         U[idx] = U0
 
         return U
+
+    return potential
+
+def potential_from_data(grid, data):
+    """create a potential from data on a grid
+    
+    Arguments:
+        grid     list of grid arrays along each dimension
+        data     potential data
+    """
+    grid = np.asarray(grid)
+    if grid.ndim == data.ndim == 1:
+        grid = (grid,)
+
+    f = RegularGridInterpolator(grid, data, bounds_error=False, fill_value=None)
+    def potential(*args):
+        return f(args)
 
     return potential
