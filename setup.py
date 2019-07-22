@@ -6,12 +6,12 @@ def read(fname):
 
 NAME = 'fplanck'
 DESCRIPTION = "Solve the Fokker-Planck equation in N dimensions"
-URL = ''
+URL = 'https://github.com/johnaparker/fplanck'
 EMAIL = 'japarker@uchicago.edu'
 AUTHOR = 'John Parker'
-KEYWORDS = 'fokker planck physics probability'
+KEYWORDS = 'fokker planck smoluchowski physics probability stochastic'
 # REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1'
+VERSION = '0.2'
 LICENSE = 'MIT'
 
 REQUIRED = [
