@@ -42,6 +42,7 @@ class fokker_planck:
         axes = [np.arange(self.Ngrid[i])*self.resolution[i] for i in range(self.ndim)]
         for axis in axes:
             axis -= np.average(axis)
+        self.axes = axes
         self.grid = np.array(np.meshgrid(*axes, indexing='ij'))
 
         self.Rt = np.zeros_like(self.grid)

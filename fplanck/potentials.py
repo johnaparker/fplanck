@@ -39,7 +39,6 @@ def gaussian_potential(center, width, amplitude):
     center = np.atleast_1d(center)
     ndim = len(center)
     width = value_to_vector(width, ndim)
-    amplitude = value_to_vector(amplitude, ndim)
 
     def potential(*args):
         U = np.ones_like(args[0])
