@@ -1,7 +1,12 @@
 [![Build Status](https://travis-ci.org/johnaparker/fplanck.svg?branch=master)](https://travis-ci.org/johnaparker/fplanck)
 
 # FPlanck
-FPlanck is a Python library for numerically solving the Fokker-Planck partial differential equation (also known as the Smoluchowski equation) in N dimensions using a matrix numerical method.
+FPlanck is a Python library for numerically solving the Fokker-Planck partial differential equation (also known as the Smoluchowski equation) in N dimensions using a matrix numerical method:
+
+<p align="center">
+  <img src="https://github.com/johnaparker/fplanck/blob/master/img/fokker_planck.svg">
+</p>
+
 The method is based on the paper *"Physically consistent numerical solver for time-dependent Fokker-Planck equations"* by V. Holubec, K. Kroy, and S. Steffenoni, available on [arXiv](https://arxiv.org/pdf/1804.01285.pdf) and published in [APS](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.99.032117).
 
 ## Features

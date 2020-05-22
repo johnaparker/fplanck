@@ -10,8 +10,8 @@ URL = 'https://github.com/johnaparker/fplanck'
 EMAIL = 'japarker@uchicago.edu'
 AUTHOR = 'John Parker'
 KEYWORDS = 'fokker planck smoluchowski physics probability stochastic'
-# REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.2'
+REQUIRES_PYTHON = '>=3.6.0'
+VERSION = '0.2.1'
 LICENSE = 'MIT'
 
 REQUIRED = [
@@ -32,6 +32,7 @@ setup(
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
     install_requires=REQUIRED,
+    python_requires=REQUIRES_PYTHON,
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',

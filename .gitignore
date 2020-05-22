@@ -4,3 +4,11 @@ __pycache__
 build/
 dist/
 play/
+
+# latex files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.gz
