@@ -15,7 +15,7 @@ class fokker_planck:
 
         Arguments:
             temperature     temperature of the surrounding bath (scalar or vector)
-            drag            drag coefficient (scalar or vector)
+            drag            drag coefficient (scalar or vector or function)
             extent          extent (size) of the grid (vector)
             resolution      spatial resolution of the grid (scalar or vector)
             potential       external potential function, U(ndim -> scalar)
@@ -27,15 +27,12 @@ class fokker_planck:
         self.ndim = self.extent.size
 
         self.temperature = value_to_vector(temperature, self.ndim)
-        self.drag        = value_to_vector(drag, self.ndim)
         self.resolution  = value_to_vector(resolution, self.ndim)
 
         self.potential = potential
         self.force = force
         self.boundary = value_to_vector(boundary, self.ndim, dtype=object)
 
-        self.diffusion = constants.k*self.temperature/self.drag
-        self.mobility = 1/self.drag
         self.beta = 1/(constants.k*self.temperature)
 
         self.Ngrid = np.ceil(self.extent/resolution).astype(int)
@@ -49,6 +46,22 @@ class fokker_planck:
         self.Lt = np.zeros_like(self.grid)
         self.potential_values = np.zeros_like(self.grid[0])
         self.force_values = np.zeros_like(self.grid)
+
+        self.drag = np.zeros_like(self.grid)
+        self.diffusion = np.zeros_like(self.grid)
+        if callable(drag):
+            self.drag[...] = drag(*self.grid)
+        elif np.isscalar(drag):
+            self.drag[...] = drag
+        elif isinstance(drag, Iterable) and len(drag) == self.ndim:
+            for i in range(self.ndim):
+                self.drag[i] = drag[i]
+        else:
+            raise ValueError(f'drag must be either a scalar, {self.ndim}-dim vector, or a function')
+
+        self.mobility = 1/self.drag
+        for i in range(self.ndim):
+            self.diffusion[i] = constants.k*self.temperature[i]/self.drag[i]
 
         if self.potential is not None:
             U = self.potential(*self.grid)
@@ -88,11 +101,11 @@ class fokker_planck:
             elif self.boundary[i] == fplanck.boundary.periodic:
                     idx = slice_idx(i, self.ndim, -1)
                     dU = -self.force_values[i][idx]*self.resolution[i]
-                    self.Rt[i][idx] = self.diffusion[i]/self.resolution[i]**2*np.exp(-self.beta[i]*dU/2)
+                    self.Rt[i][idx] = self.diffusion[i][idx]/self.resolution[i]**2*np.exp(-self.beta[i]*dU/2)
 
                     idx = slice_idx(i, self.ndim, 0)
                     dU = self.force_values[i][idx]*self.resolution[i]
-                    self.Lt[i][idx] = self.diffusion[i]/self.resolution[i]**2*np.exp(-self.beta[i]*dU/2)
+                    self.Lt[i][idx] = self.diffusion[i][idx]/self.resolution[i]**2*np.exp(-self.beta[i]*dU/2)
             else:
                 raise ValueError(f"'{self.boundary[i]}' is not a valid a boundary condition")
 
