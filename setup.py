@@ -11,7 +11,7 @@ EMAIL = 'japarker@uchicago.edu'
 AUTHOR = 'John Parker'
 KEYWORDS = 'fokker planck smoluchowski physics probability stochastic'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.2.1'
+VERSION = '0.2.2'
 LICENSE = 'MIT'
 
 REQUIRED = [

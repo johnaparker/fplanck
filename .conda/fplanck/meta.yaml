@@ -1,0 +1,34 @@
+{% set name = "fplanck" %}
+{% set version = "0.2.1" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+
+requirements:
+  host:
+    - pip
+    - python
+    - numpy
+    - scipy
+  run:
+    - python
+    - numpy
+    - scipy
+
+test:
+  imports:
+    - fplanck
+
+about:
+  home: https://github.com/johnaparker/{{ name }}
+  license: MIT
+  license_family: MIT
+  summary: Numerically solve the Fokker-Planck equation in N dimensions
