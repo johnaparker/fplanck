@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck, boundary, uniform_pdf, harmonic_potential
+from fplanck import FokkerPlanck, boundary, uniform_pdf, harmonic_potential
 
 nm = 1e-9
 viscosity = 8e-4
@@ -10,7 +10,7 @@ radius = 50 * nm
 drag = 6 * np.pi * viscosity * radius
 
 U = harmonic_potential((0, 0), 1e-6)
-sim = fokker_planck(
+sim = FokkerPlanck(
     temperature=300,
     drag=drag,
     extent=600 * nm,

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck, boundary, gaussian_pdf, gaussian_potential, combine
+from fplanck import FokkerPlanck, boundary, gaussian_pdf, gaussian_potential, combine
 
 nm = 1e-9
 viscosity = 8e-4
@@ -17,7 +17,7 @@ U = combine(
     lambda x: -2e-14 * x,
 )
 
-sim = fokker_planck(
+sim = FokkerPlanck(
     temperature=300,
     drag=drag,
     extent=600 * nm,

@@ -1,11 +1,11 @@
 import pytest
-from fplanck import fokker_planck, boundary, k
+from fplanck import FokkerPlanck, boundary, k
 import numpy as np
 
 
 def test_uniform_1d_steady_state():
     """the steady state solution should be uniform in 1D"""
-    sim = fokker_planck(
+    sim = FokkerPlanck(
         temperature=1 / k, drag=1, extent=1, resolution=0.1, boundary=boundary.periodic
     )
 
@@ -18,7 +18,7 @@ def test_uniform_1d_steady_state():
 
 def test_uniform_2d_steady_state():
     """the steady state solution should be uniform in 2D"""
-    sim = fokker_planck(
+    sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=[1, 1],

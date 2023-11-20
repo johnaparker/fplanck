@@ -6,7 +6,7 @@ authors = [
     { name = "John Parker", email = "japarker@uchicago.edu" }
 ]
 readme = "README.md"
-requires-python = ">=3.10.0"
+requires-python = ">=3.12.0"
 license = { text = "MIT" }
 dependencies = [
     "numpy>=1.26.2",
@@ -24,6 +24,7 @@ dev-dependencies = [
     "matplotlib>=3.8.2",
     "ruff>=0.1.6",
     "pre-commit>=3.5.0",
+    "pyright>=1.1.336",
 ]
 
 [tool.hatch.metadata]

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck, boundary, gaussian_pdf
+from fplanck import FokkerPlanck, boundary, gaussian_pdf
 from mpl_toolkits.mplot3d import Axes3D
 
 nm = 1e-9
@@ -24,7 +24,7 @@ def F(x, y):
     return np.array([Fx, Fy])
 
 
-sim = fokker_planck(
+sim = FokkerPlanck(
     temperature=300,
     drag=drag,
     extent=[800 * nm, 800 * nm],

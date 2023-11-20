@@ -1,6 +1,6 @@
 import pytest
 from fplanck import (
-    fokker_planck,
+    FokkerPlanck,
     boundary,
     k,
     delta_function,
@@ -16,7 +16,7 @@ F = lambda x: -K * x
 
 def test_harmonic_1d_steady_state(plot=False):
     """1D harmonic oscillator steady-state compared to analytic solution"""
-    sim = fokker_planck(
+    sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,
@@ -42,7 +42,7 @@ def test_harmonic_1d_steady_state(plot=False):
 
 def test_harmonic_1d_finite_time(plot=False):
     """1D harmonic oscillator at finite time compared to analytic solution"""
-    sim = fokker_planck(
+    sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,
@@ -72,7 +72,7 @@ def test_harmonic_1d_finite_time(plot=False):
 
 def test_harmonic_1d_time_limit():
     """propagating by a large amount of time should yield the same solution as the steady-state"""
-    sim = fokker_planck(
+    sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,
@@ -92,7 +92,7 @@ def test_harmonic_1d_time_limit():
 
 def test_harmonic_1d_force_potential():
     """specifying the force should be identical to specifying the potential"""
-    sim1 = fokker_planck(
+    sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,
@@ -100,7 +100,7 @@ def test_harmonic_1d_force_potential():
         boundary=boundary.reflecting,
         potential=U,
     )
-    sim2 = fokker_planck(
+    sim2 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,
@@ -124,7 +124,7 @@ def test_harmonic_1d_force_potential():
 
 def test_potential_from_data():
     """the harmonic oscillator obtained from potential data vs. from functional"""
-    sim1 = fokker_planck(
+    sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,
@@ -137,7 +137,7 @@ def test_potential_from_data():
     Udata = U(x)
     newU = potential_from_data(x, Udata)
 
-    sim2 = fokker_planck(
+    sim2 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,
@@ -156,7 +156,7 @@ def test_potential_from_data():
 
 def test_force_from_data():
     """the harmonic oscillator obtained from force data vs. from functional"""
-    sim1 = fokker_planck(
+    sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,
@@ -169,7 +169,7 @@ def test_force_from_data():
     Fdata = F(x)
     newF = potential_from_data(x, Fdata)
 
-    sim2 = fokker_planck(
+    sim2 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=10,

@@ -1,15 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck, boundary, gaussian_pdf
+from fplanck.solver import FokkerPlanck
+from fplanck.functions import gaussian_pdf
+from fplanck.utility import boundary
 
 nm = 1e-9
 viscosity = 8e-4
 radius = 50 * nm
 drag = 6 * np.pi * viscosity * radius
 
-sim = fokker_planck(
+sim = FokkerPlanck(
     temperature=300,
     drag=drag,
     extent=200 * nm,

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import fokker_planck, boundary, delta_function
+from fplanck import FokkerPlanck, boundary, delta_function
 
 xc = -5
 
@@ -12,7 +12,7 @@ def drag(x):
     return A * ((x - xc) ** 2)
 
 
-sim = fokker_planck(
+sim = FokkerPlanck(
     temperature=1, drag=drag, extent=10, resolution=0.05, boundary=boundary.reflecting
 )
 

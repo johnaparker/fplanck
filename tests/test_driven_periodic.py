@@ -1,5 +1,5 @@
 import pytest
-from fplanck import fokker_planck, boundary, k
+from fplanck import FokkerPlanck, boundary, k
 import numpy as np
 
 

@@ -1,10 +1,22 @@
-import numpy as np
+"""Utility functions."""
+
 import enum
 from inspect import getfullargspec
+from typing import Callable
+import numpy as np
+import numpy.typing as npt
 
 
-def value_to_vector(value, ndim, dtype=float):
-    """convert a value to a vector in ndim"""
+def value_to_vector(value: npt.ArrayLike | float, ndim: int, dtype: type = float):
+    """Convert a value to a n-dimensional vector.
+
+    Args:
+        ndim: number if dimensions in target vector
+        dtype: type of target vector array
+
+    Returns:
+        numpy array
+    """
     value = np.asarray(value, dtype=dtype)
     if value.ndim == 0:
         vec = np.asarray(np.repeat(value, ndim), dtype=dtype)
@@ -18,16 +30,18 @@ def value_to_vector(value, ndim, dtype=float):
     return vec
 
 
-def slice_idx(i, ndim, s0):
-    """return a boolean array for a ndim-1 slice along the i'th axis at value s0"""
+#TODO: this function seems questionable
+def slice_idx(i: int, ndim: int, s0) -> tuple:
+    """Return a boolean array for a ndim-1 slice along the i'th axis at value s0"""
     idx = [slice(None)] * ndim
     idx[i] = s0
 
     return tuple(idx)
 
 
-def combine(*funcs):
-    """combine a collection of functions into a single function (for probability, potential, and force functions)"""
+#TODO: better name + what if funcs is empty
+def combine[T](*funcs: Callable[..., T]) -> Callable[..., T]:
+    """Combine a collection of functions into a single function (for probability, potential, and force functions)."""
 
     def combined_func(*args):
         values = funcs[0](*args)
@@ -39,15 +53,15 @@ def combine(*funcs):
     return combined_func
 
 
-class boundary(enum.Enum):
-    """enum for the types ofboundary conditions"""
+class Boundary(enum.Enum):
+    """Enum for the types of boundary conditions."""
 
-    reflecting = enum.auto()
-    periodic = enum.auto()
+    REFLECTING = enum.auto()
+    PERIODIC = enum.auto()
 
 
-def vectorize_force(f):
-    """decorator to vectorize a force function"""
+def vectorize_force(f: Callable[[npt.ArrayLike], npt.ArrayLike]) -> Callable[[npt.ArrayLike], npt.ArrayLike]:
+    """Decorator to vectorize a force function."""
     ndim = len(getfullargspec(f).args)
     signature = ",".join(["()"] * ndim)
     signature += "->(N)"
