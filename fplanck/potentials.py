@@ -5,6 +5,7 @@ import numpy as np
 from fplanck.utility import value_to_vector
 from scipy.interpolate import RegularGridInterpolator
 
+
 def harmonic_potential(center, k):
     """A harmonic potential
 
@@ -21,11 +22,12 @@ def harmonic_potential(center, k):
         U = np.zeros_like(args[0])
 
         for i, arg in enumerate(args):
-            U += 0.5*k[i]*(arg - center[i])**2
+            U += 0.5 * k[i] * (arg - center[i]) ** 2
 
         return U
 
     return potential
+
 
 def gaussian_potential(center, width, amplitude):
     """A Gaussian potential
@@ -44,15 +46,16 @@ def gaussian_potential(center, width, amplitude):
         U = np.ones_like(args[0])
 
         for i, arg in enumerate(args):
-            U *= np.exp(-np.square((arg - center[i])/width[i]))
+            U *= np.exp(-np.square((arg - center[i]) / width[i]))
 
-        return -amplitude*U
+        return -amplitude * U
 
     return potential
 
+
 def uniform_potential(func, U0):
     """A uniform potential
-    
+
     Arguments:
         func    a boolean function specifying region of uniform probability (default: everywhere)
         U0      value of the potential
@@ -67,9 +70,10 @@ def uniform_potential(func, U0):
 
     return potential
 
+
 def potential_from_data(grid, data):
     """create a potential from data on a grid
-    
+
     Arguments:
         grid     list of grid arrays along each dimension
         data     potential data
@@ -79,6 +83,7 @@ def potential_from_data(grid, data):
         grid = (grid,)
 
     f = RegularGridInterpolator(grid, data, bounds_error=False, fill_value=None)
+
     def potential(*args):
         return f(args)
 
