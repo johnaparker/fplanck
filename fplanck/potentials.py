@@ -1,17 +1,22 @@
 """
 pre-defined convenience potential functions
 """
+from typing import Callable
 import numpy as np
 from fplanck.utility import value_to_vector
 from scipy.interpolate import RegularGridInterpolator
+import numpy.typing as npt
 
 
-def harmonic_potential(center, k):
-    """A harmonic potential
+def harmonic_potential(center: npt.ArrayLike | float, k: npt.ArrayLike | float):
+    """Return a harmonic potential.
 
-    Arguments:
-        center    center of harmonic potential (scalar or vector)
-        k         spring constant of harmonic potential (scalar or vector)
+    Args:
+        center: center of harmonic potential (scalar or vector)
+        k: spring constant of harmonic potential (scalar or vector)
+
+    Returns:
+        #TODO
     """
 
     center = np.atleast_1d(center)
@@ -29,13 +34,18 @@ def harmonic_potential(center, k):
     return potential
 
 
-def gaussian_potential(center, width, amplitude):
-    """A Gaussian potential
+def gaussian_potential(
+    center: npt.ArrayLike | float, width: npt.ArrayLike | float, amplitude: float
+):
+    """Return a Gaussian potential.
 
-    Arguments:
-        center    center of Gaussian (scalar or vector)
-        width     width of Gaussian  (scalar or vector)
-        amplitude amplitude of Gaussian, (negative for repulsive)
+    Args:
+        center: center of Gaussian (scalar or vector)
+        width: width of Gaussian  (scalar or vector)
+        amplitude: amplitude of Gaussian, (negative for repulsive)
+
+    Returns:
+        #TODO
     """
 
     center = np.atleast_1d(center)
@@ -53,12 +63,15 @@ def gaussian_potential(center, width, amplitude):
     return potential
 
 
-def uniform_potential(func, U0):
-    """A uniform potential
+def uniform_potential(func: Callable, U0: float):
+    """Return a uniform potential.
 
-    Arguments:
-        func    a boolean function specifying region of uniform probability (default: everywhere)
-        U0      value of the potential
+    Args:
+        func: a boolean function specifying region of uniform probability (default: everywhere)
+        U0: value of the potential
+
+    Returns:
+        #TODO
     """
 
     def potential(*args):
@@ -71,12 +84,15 @@ def uniform_potential(func, U0):
     return potential
 
 
-def potential_from_data(grid, data):
-    """create a potential from data on a grid
+def potential_from_data(grid: npt.ArrayLike, data: npt.ArrayLike) -> npt.ArrayLike:
+    """Create a potential from data on a grid.
 
-    Arguments:
-        grid     list of grid arrays along each dimension
-        data     potential data
+    Args:
+        grid: list of grid arrays along each dimension
+        data: potential data
+
+    Returns:
+        #TODO
     """
     grid = np.asarray(grid)
     if grid.ndim == data.ndim == 1:

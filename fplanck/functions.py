@@ -1,12 +1,20 @@
-"""
-pre-defined convenience probability distribution functions
-"""
+"""Pre-defined convenience probability distribution functions."""
+from typing import Callable
+from typing import Any
 import numpy as np
 from fplanck.utility import value_to_vector
+import numpy.typing as npt
 
 
-def delta_function(r0):
-    """a discrete equivalent of a dirac-delta function centered at r0"""
+def delta_function(r0: npt.ArrayLike) -> npt.ArrayLike:
+    """A discrete equivalent of a dirac-delta function centered at r0.
+
+    Args:
+        r0: #TODO
+
+    Returns:
+        #TODO
+    """
     r0 = np.atleast_1d(r0)
 
     def pdf(*args):
@@ -21,12 +29,17 @@ def delta_function(r0):
     return pdf
 
 
-def gaussian_pdf(center, width):
-    """A Gaussian probability distribution function
+def gaussian_pdf(
+    center: npt.ArrayLike | float, width: npt.ArrayLike | float
+) -> npt.ArrayLike:
+    """A Gaussian probability distribution function.
 
-    Arguments:
-        center    center of Gaussian (scalar or vector)
-        width     width of Gaussian (scalar or vector)
+    Args:
+        center: center of Gaussian (scalar or vector)
+        width: width of Gaussian (scalar or vector)
+
+    Returns:
+        #TODO
     """
 
     center = np.atleast_1d(center)
@@ -44,11 +57,14 @@ def gaussian_pdf(center, width):
     return pdf
 
 
-def uniform_pdf(func=None):
-    """A uniform probability distribution function
+def uniform_pdf(func: Callable[..., Any] | None = None) -> npt.ArrayLike:
+    """A uniform probability distribution function.
 
-    Arguments:
-        func    a boolean function specifying region of uniform probability (default: everywhere)
+    Args:
+        func: a boolean function specifying region of uniform probability (default: everywhere)
+
+    Returns:
+        #TODO
     """
 
     def pdf(*args):

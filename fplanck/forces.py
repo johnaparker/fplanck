@@ -1,16 +1,19 @@
-"""
-pre-defined convenience force functions
-"""
+"""Pre-defined convenience force functions."""
+
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
+import numpy.typing as npt
 
 
-def force_from_data(grid, data):
-    """create a force function from data on a grid
+def force_from_data(grid: npt.ArrayLike, data: npt.ArrayLike) -> npt.ArrayLike:
+    """Create a force function from data on a grid
 
-    Arguments:
-        grid     list of grid arrays along each dimension
-        data     force data (shape [ndim, ...])
+    Args:
+        grid: list of grid arrays along each dimension
+        data: force data (shape [ndim, ...])
+
+    Returns:
+        force array
     """
     grid = np.asarray(grid)
     if grid.ndim == data.ndim == 1:

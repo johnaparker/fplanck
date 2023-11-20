@@ -30,7 +30,7 @@ def value_to_vector(value: npt.ArrayLike | float, ndim: int, dtype: type = float
     return vec
 
 
-#TODO: this function seems questionable
+# TODO: this function seems questionable
 def slice_idx(i: int, ndim: int, s0) -> tuple:
     """Return a boolean array for a ndim-1 slice along the i'th axis at value s0"""
     idx = [slice(None)] * ndim
@@ -39,7 +39,7 @@ def slice_idx(i: int, ndim: int, s0) -> tuple:
     return tuple(idx)
 
 
-#TODO: better name + what if funcs is empty
+# TODO: better name + what if funcs is empty
 def combine[T](*funcs: Callable[..., T]) -> Callable[..., T]:
     """Combine a collection of functions into a single function (for probability, potential, and force functions)."""
 
@@ -60,7 +60,9 @@ class Boundary(enum.Enum):
     PERIODIC = enum.auto()
 
 
-def vectorize_force(f: Callable[[npt.ArrayLike], npt.ArrayLike]) -> Callable[[npt.ArrayLike], npt.ArrayLike]:
+def vectorize_force(
+    f: Callable[[npt.ArrayLike], npt.ArrayLike]
+) -> Callable[[npt.ArrayLike], npt.ArrayLike]:
     """Decorator to vectorize a force function."""
     ndim = len(getfullargspec(f).args)
     signature = ",".join(["()"] * ndim)

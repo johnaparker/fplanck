@@ -4,7 +4,6 @@ from collections.abc import Iterable
 import numpy as np
 import numpy.typing as npt
 from scipy import constants
-from scipy.linalg import expm
 from scipy import sparse
 from scipy.sparse.linalg import expm, eigs, expm_multiply
 import fplanck
@@ -208,7 +207,9 @@ class FokkerPlanck:
 
         return steady
 
-    def propagate(self, initial, time: float, normalize: bool = True, dense: bool = False) -> npt.ArrayLike:
+    def propagate(
+        self, initial, time: float, normalize: bool = True, dense: bool = False
+    ) -> npt.ArrayLike:
         """Propagate an initial probability distribution in time.
 
         Args:
@@ -231,7 +232,14 @@ class FokkerPlanck:
 
         return pf.reshape(self.Ngrid)
 
-    def propagate_interval(self, initial, tf: float, Nsteps: int | None = None, dt: float | None = None, normalize: bool = True):
+    def propagate_interval(
+        self,
+        initial,
+        tf: float,
+        Nsteps: int | None = None,
+        dt: float | None = None,
+        normalize: bool = True,
+    ):
         """Propagate an initial probability distribution over a time interval.
 
         Args:
