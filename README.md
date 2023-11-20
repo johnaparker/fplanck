@@ -22,10 +22,6 @@ FPlanck can be installed with pip
 ```shell
 pip install fplanck
 ```
-or conda
-```shell
-conda install -c japarker fplanck
-```
 
 ## Examples
 ![](https://github.com/johnaparker/fplanck/blob/master/img/ratchet.gif)

@@ -1,0 +1,29 @@
+[project]
+name = "fplanck"
+version = "0.2.2"
+description = "Solve the Fokker-Planck equation in N dimensions"
+authors = [
+    { name = "John Parker", email = "japarker@uchicago.edu" }
+]
+readme = "README.md"
+requires-python = ">=3.10.0"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.26.2",
+    "scipy>=1.11.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pytest>=7.4.3",
+    "matplotlib>=3.8.2",
+    "ruff>=0.1.6",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
