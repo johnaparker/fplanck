@@ -1,16 +1,22 @@
 """
 pre-defined convenience potential functions
 """
+from typing import Callable
 import numpy as np
 from fplanck.utility import value_to_vector
 from scipy.interpolate import RegularGridInterpolator
+import numpy.typing as npt
 
-def harmonic_potential(center, k):
-    """A harmonic potential
 
-    Arguments:
-        center    center of harmonic potential (scalar or vector)
-        k         spring constant of harmonic potential (scalar or vector)
+def harmonic_potential(center: npt.ArrayLike | float, k: npt.ArrayLike | float):
+    """Return a harmonic potential.
+
+    Args:
+        center: center of harmonic potential (scalar or vector)
+        k: spring constant of harmonic potential (scalar or vector)
+
+    Returns:
+        #TODO
     """
 
     center = np.atleast_1d(center)
@@ -21,19 +27,25 @@ def harmonic_potential(center, k):
         U = np.zeros_like(args[0])
 
         for i, arg in enumerate(args):
-            U += 0.5*k[i]*(arg - center[i])**2
+            U += 0.5 * k[i] * (arg - center[i]) ** 2
 
         return U
 
     return potential
 
-def gaussian_potential(center, width, amplitude):
-    """A Gaussian potential
 
-    Arguments:
-        center    center of Gaussian (scalar or vector)
-        width     width of Gaussian  (scalar or vector)
-        amplitude amplitude of Gaussian, (negative for repulsive)
+def gaussian_potential(
+    center: npt.ArrayLike | float, width: npt.ArrayLike | float, amplitude: float
+):
+    """Return a Gaussian potential.
+
+    Args:
+        center: center of Gaussian (scalar or vector)
+        width: width of Gaussian  (scalar or vector)
+        amplitude: amplitude of Gaussian, (negative for repulsive)
+
+    Returns:
+        #TODO
     """
 
     center = np.atleast_1d(center)
@@ -44,18 +56,22 @@ def gaussian_potential(center, width, amplitude):
         U = np.ones_like(args[0])
 
         for i, arg in enumerate(args):
-            U *= np.exp(-np.square((arg - center[i])/width[i]))
+            U *= np.exp(-np.square((arg - center[i]) / width[i]))
 
-        return -amplitude*U
+        return -amplitude * U
 
     return potential
 
-def uniform_potential(func, U0):
-    """A uniform potential
-    
-    Arguments:
-        func    a boolean function specifying region of uniform probability (default: everywhere)
-        U0      value of the potential
+
+def uniform_potential(func: Callable, U0: float):
+    """Return a uniform potential.
+
+    Args:
+        func: a boolean function specifying region of uniform probability (default: everywhere)
+        U0: value of the potential
+
+    Returns:
+        #TODO
     """
 
     def potential(*args):
@@ -67,18 +83,23 @@ def uniform_potential(func, U0):
 
     return potential
 
-def potential_from_data(grid, data):
-    """create a potential from data on a grid
-    
-    Arguments:
-        grid     list of grid arrays along each dimension
-        data     potential data
+
+def potential_from_data(grid: npt.ArrayLike, data: npt.ArrayLike) -> npt.ArrayLike:
+    """Create a potential from data on a grid.
+
+    Args:
+        grid: list of grid arrays along each dimension
+        data: potential data
+
+    Returns:
+        #TODO
     """
     grid = np.asarray(grid)
     if grid.ndim == data.ndim == 1:
         grid = (grid,)
 
     f = RegularGridInterpolator(grid, data, bounds_error=False, fill_value=None)
+
     def potential(*args):
         return f(args)
 
