@@ -1,6 +1,6 @@
 [project]
 name = "fplanck"
-version = "0.2.2"
+version = "1.0.0"
 description = "Solve the Fokker-Planck equation in N dimensions"
 authors = [
     { name = "John Parker", email = "japarker@uchicago.edu" }
