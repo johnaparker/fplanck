@@ -5,9 +5,7 @@ import numpy as np
 
 def test_uniform_1d_steady_state():
     """the steady state solution should be uniform in 1D"""
-    sim = FokkerPlanck(
-        temperature=1 / k, drag=1, extent=1, resolution=0.1, boundary=boundary.periodic
-    )
+    sim = FokkerPlanck(temperature=1 / k, drag=1, extent=1, resolution=0.1, boundary=boundary.periodic)
 
     steady = sim.steady_state()
     dp = np.gradient(steady)

@@ -36,12 +36,8 @@ time, Pt = sim.propagate_interval(pdf, 2e-3, Nsteps=Nsteps)
 ### animation
 fig, ax = plt.subplots(constrained_layout=True)
 
-ax.plot(
-    sim.grid[0] / nm, p0, color="red", ls="--", alpha=0.3, lw=2, label="initial PDF"
-)
-ax.plot(
-    sim.grid[0] / nm, steady, color="k", ls="--", alpha=0.5, lw=2, label="steady-state"
-)
+ax.plot(sim.grid[0] / nm, p0, color="red", ls="--", alpha=0.3, lw=2, label="initial PDF")
+ax.plot(sim.grid[0] / nm, steady, color="k", ls="--", alpha=0.5, lw=2, label="steady-state")
 (line,) = ax.plot(sim.grid[0] / nm, p0, lw=3, color="C3", label="solution")
 ax.legend(loc=1)
 

@@ -23,9 +23,7 @@ def value_to_vector(value: npt.ArrayLike | float, ndim: int, dtype: type = float
     else:
         vec = np.asarray(value)
         if vec.size != ndim:
-            raise ValueError(
-                f"input vector ({value}) does not have the correct dimensions (ndim = {ndim})"
-            )
+            raise ValueError(f"input vector ({value}) does not have the correct dimensions (ndim = {ndim})")
 
     return vec
 
@@ -60,9 +58,7 @@ class Boundary(enum.Enum):
     PERIODIC = enum.auto()
 
 
-def vectorize_force(
-    f: Callable[[npt.ArrayLike], npt.ArrayLike]
-) -> Callable[[npt.ArrayLike], npt.ArrayLike]:
+def vectorize_force(f: Callable[[npt.ArrayLike], npt.ArrayLike]) -> Callable[[npt.ArrayLike], npt.ArrayLike]:
     """Decorator to vectorize a force function."""
     ndim = len(getfullargspec(f).args)
     signature = ",".join(["()"] * ndim)

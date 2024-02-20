@@ -12,9 +12,7 @@ def drag(x):
     return A * ((x - xc) ** 2)
 
 
-sim = FokkerPlanck(
-    temperature=1, drag=drag, extent=10, resolution=0.05, boundary=boundary.reflecting
-)
+sim = FokkerPlanck(temperature=1, drag=drag, extent=10, resolution=0.05, boundary=boundary.reflecting)
 
 ### steady-state solution
 steady = sim.steady_state()

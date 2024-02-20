@@ -29,9 +29,7 @@ def delta_function(r0: npt.ArrayLike) -> npt.ArrayLike:
     return pdf
 
 
-def gaussian_pdf(
-    center: npt.ArrayLike | float, width: npt.ArrayLike | float
-) -> npt.ArrayLike:
+def gaussian_pdf(center: npt.ArrayLike | float, width: npt.ArrayLike | float) -> npt.ArrayLike:
     """A Gaussian probability distribution function.
 
     Args:
