@@ -34,9 +34,7 @@ def harmonic_potential(center: npt.ArrayLike | float, k: npt.ArrayLike | float):
     return potential
 
 
-def gaussian_potential(
-    center: npt.ArrayLike | float, width: npt.ArrayLike | float, amplitude: float
-):
+def gaussian_potential(center: npt.ArrayLike | float, width: npt.ArrayLike | float, amplitude: float):
     """Return a Gaussian potential.
 
     Args:

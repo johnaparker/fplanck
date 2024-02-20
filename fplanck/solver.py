@@ -1,18 +1,29 @@
 """FokkerPlanck solver class."""
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
+
 import numpy as np
 import numpy.typing as npt
-from scipy import constants
-from scipy import sparse
-from scipy.sparse.linalg import expm, eigs, expm_multiply
+from scipy import constants, sparse
+from scipy.sparse.linalg import eigs, expm, expm_multiply
+
 import fplanck
-from fplanck.utility import value_to_vector, slice_idx
-from fplanck.utility import Boundary
-from typing import Callable
+from fplanck.utility import Boundary, slice_idx, value_to_vector
 
 
 class FokkerPlanck:
+    """Class to manage solving the Fokker-Planck equation.
+
+    Attrs:
+        temperature: temperaturef the surrounding bath (scalar or vector)
+        drag: drag coefficient (scalar or vector or function)
+        extent: extent (size) of the grid (vector)
+        resolution: spatial resolution of the grid (scalar or vector)
+        potential: external potential function, U(ndim -> scalar)
+        force: external force function, F(ndim -> ndim)
+        boundary: type of boundary condition (scalar or vector, default: reflecting)
+    """
+
     def __init__(
         self,
         *,
@@ -24,19 +35,6 @@ class FokkerPlanck:
         force: Callable[[npt.ArrayLike], float] | None = None,
         boundary: Boundary = Boundary.REFLECTING,
     ):
-        """
-        Class to manage solving the Fokker-Planck equation.
-
-        Attributes:
-            temperature: temperature of the surrounding bath (scalar or vector)
-            drag: drag coefficient (scalar or vector or function)
-            extent: extent (size) of the grid (vector)
-            resolution: spatial resolution of the grid (scalar or vector)
-            potential: external potential function, U(ndim -> scalar)
-            force: external force function, F(ndim -> ndim)
-            boundary: type of boundary condition (scalar or vector, default: reflecting)
-        """
-
         self.extent = np.atleast_1d(extent)
         self.ndim = self.extent.size
 
@@ -71,9 +69,7 @@ class FokkerPlanck:
             for i in range(self.ndim):
                 self.drag[i] = drag[i]
         else:
-            raise ValueError(
-                f"drag must be either a scalar, {self.ndim}-dim vector, or a function"
-            )
+            raise ValueError(f"drag must be either a scalar, {self.ndim}-dim vector, or a function")
 
         self.mobility = 1 / self.drag
         for i in range(self.ndim):
@@ -86,18 +82,10 @@ class FokkerPlanck:
 
             for i in range(self.ndim):
                 dU = np.roll(U, -1, axis=i) - U
-                self.Rt[i] += (
-                    self.diffusion[i]
-                    / self.resolution[i] ** 2
-                    * np.exp(-self.beta[i] * dU / 2)
-                )
+                self.Rt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
 
                 dU = np.roll(U, 1, axis=i) - U
-                self.Lt[i] += (
-                    self.diffusion[i]
-                    / self.resolution[i] ** 2
-                    * np.exp(-self.beta[i] * dU / 2)
-                )
+                self.Lt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
 
         if self.force is not None:
             F = np.atleast_2d(self.force(*self.grid))
@@ -105,18 +93,10 @@ class FokkerPlanck:
 
             for i in range(self.ndim):
                 dU = -(np.roll(F[i], -1, axis=i) + F[i]) / 2 * self.resolution[i]
-                self.Rt[i] += (
-                    self.diffusion[i]
-                    / self.resolution[i] ** 2
-                    * np.exp(-self.beta[i] * dU / 2)
-                )
+                self.Rt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
 
                 dU = (np.roll(F[i], 1, axis=i) + F[i]) / 2 * self.resolution[i]
-                self.Lt[i] += (
-                    self.diffusion[i]
-                    / self.resolution[i] ** 2
-                    * np.exp(-self.beta[i] * dU / 2)
-                )
+                self.Lt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
 
         if self.force is None and self.potential is None:
             for i in range(self.ndim):
@@ -133,23 +113,13 @@ class FokkerPlanck:
             elif self.boundary[i] == fplanck.boundary.periodic:
                 idx = slice_idx(i, self.ndim, -1)
                 dU = -self.force_values[i][idx] * self.resolution[i]
-                self.Rt[i][idx] = (
-                    self.diffusion[i][idx]
-                    / self.resolution[i] ** 2
-                    * np.exp(-self.beta[i] * dU / 2)
-                )
+                self.Rt[i][idx] = self.diffusion[i][idx] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
 
                 idx = slice_idx(i, self.ndim, 0)
                 dU = self.force_values[i][idx] * self.resolution[i]
-                self.Lt[i][idx] = (
-                    self.diffusion[i][idx]
-                    / self.resolution[i] ** 2
-                    * np.exp(-self.beta[i] * dU / 2)
-                )
+                self.Lt[i][idx] = self.diffusion[i][idx] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
             else:
-                raise ValueError(
-                    f"'{self.boundary[i]}' is not a valid a boundary condition"
-                )
+                raise ValueError(f"'{self.boundary[i]}' is not a valid a boundary condition")
 
         self._build_matrix()
 
@@ -165,9 +135,7 @@ class FokkerPlanck:
         counter = 0
         for i in range(N):
             idx = np.unravel_index(i, self.Ngrid)
-            data[counter] = -sum(
-                [self.Rt[n][idx] + self.Lt[n][idx] for n in range(self.ndim)]
-            )
+            data[counter] = -sum([self.Rt[n][idx] + self.Lt[n][idx] for n in range(self.ndim)])
             row[counter] = i
             col[counter] = i
             counter += 1
@@ -207,9 +175,7 @@ class FokkerPlanck:
 
         return steady
 
-    def propagate(
-        self, initial, time: float, normalize: bool = True, dense: bool = False
-    ) -> npt.ArrayLike:
+    def propagate(self, initial, time: float, normalize: bool = True, dense: bool = False) -> npt.ArrayLike:
         """Propagate an initial probability distribution in time.
 
         Args:
@@ -239,17 +205,17 @@ class FokkerPlanck:
         Nsteps: int | None = None,
         dt: float | None = None,
         normalize: bool = True,
-    ):
+    ) -> float:
         """Propagate an initial probability distribution over a time interval.
 
         Args:
-            initial      initial probability density function
-            tf           stop time (inclusive)
-            Nsteps       number of time-steps (specifiy Nsteps or dt)
-            dt           length of time-steps (specifiy Nsteps or dt)
-            normalize    if True, normalize the initial probability
+            initial: initial probability density function
+            tf: stop time (inclusive)
+            Nsteps: number of time-steps (specifiy Nsteps or dt)
+            dt: length of time-steps (specifiy Nsteps or dt)
+            normalize: if True, normalize the initial probability
 
-        Retunrs:
+        Returns:
             (time array, probability distribution at each time step)
         """
         p0 = initial(*self.grid)

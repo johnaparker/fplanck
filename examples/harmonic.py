@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.animation import FuncAnimation
-from fplanck import FokkerPlanck, boundary, uniform_pdf, harmonic_potential
+from fplanck import boundary, uniform_pdf, harmonic_potential
+from fplanck.solver import FokkerPlanck
 
 nm = 1e-9
 viscosity = 8e-4
@@ -19,16 +20,16 @@ sim = FokkerPlanck(
     potential=U,
 )
 
-### steady-state solution
+# steady-state solution
 steady = sim.steady_state()
 
-### time-evolved solution
+# time-evolved solution
 pdf = uniform_pdf(lambda x: (x > 100 * nm) & (x < 150 * nm))
 p0 = pdf(sim.grid[0])
 Nsteps = 200
 time, Pt = sim.propagate_interval(pdf, 3e-3, Nsteps=Nsteps)
 
-### animation
+# animation
 fig, ax = plt.subplots()
 
 ax.plot(sim.grid[0] / nm, steady, color="k", ls="--", alpha=0.5)

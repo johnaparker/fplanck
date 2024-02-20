@@ -4,6 +4,7 @@ __pycache__
 build/
 dist/
 play/
+.venv/
 
 # latex files
 *.aux
