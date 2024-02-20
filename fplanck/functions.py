@@ -1,9 +1,11 @@
 """Pre-defined convenience probability distribution functions."""
-from typing import Callable
+from collections.abc import Callable
 from typing import Any
+
 import numpy as np
-from fplanck.utility import value_to_vector
 import numpy.typing as npt
+
+from fplanck.utility import value_to_vector
 
 
 def delta_function(r0: npt.ArrayLike) -> npt.ArrayLike:
@@ -39,7 +41,6 @@ def gaussian_pdf(center: npt.ArrayLike | float, width: npt.ArrayLike | float) ->
     Returns:
         #TODO
     """
-
     center = np.atleast_1d(center)
     ndim = len(center)
     width = value_to_vector(width, ndim)

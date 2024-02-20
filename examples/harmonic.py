@@ -1,8 +1,8 @@
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+import numpy as np
 from matplotlib.animation import FuncAnimation
-from fplanck import boundary, uniform_pdf, harmonic_potential
+
+from fplanck import boundary, harmonic_potential, uniform_pdf
 from fplanck.solver import FokkerPlanck
 
 nm = 1e-9

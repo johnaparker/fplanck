@@ -1,7 +1,8 @@
+from functools import partial
+
+import matplotlib.pyplot as plt
 import numpy as np
 import stoked
-import matplotlib.pyplot as plt
-from functools import partial
 from scipy import constants
 
 nm = 1e-9

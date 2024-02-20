@@ -1,8 +1,9 @@
 """Utility functions."""
 
 import enum
+from collections.abc import Callable
 from inspect import getfullargspec
-from typing import Callable
+
 import numpy as np
 import numpy.typing as npt
 

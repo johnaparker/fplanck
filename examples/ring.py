@@ -1,9 +1,8 @@
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+import numpy as np
 from matplotlib.animation import FuncAnimation
+
 from fplanck import FokkerPlanck, boundary, gaussian_pdf
-from mpl_toolkits.mplot3d import Axes3D
 
 nm = 1e-9
 viscosity = 8e-4

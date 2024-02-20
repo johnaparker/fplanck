@@ -1,11 +1,12 @@
+"""pre-defined convenience potential functions
 """
-pre-defined convenience potential functions
-"""
-from typing import Callable
+from collections.abc import Callable
+
 import numpy as np
-from fplanck.utility import value_to_vector
-from scipy.interpolate import RegularGridInterpolator
 import numpy.typing as npt
+from scipy.interpolate import RegularGridInterpolator
+
+from fplanck.utility import value_to_vector
 
 
 def harmonic_potential(center: npt.ArrayLike | float, k: npt.ArrayLike | float):
@@ -18,7 +19,6 @@ def harmonic_potential(center: npt.ArrayLike | float, k: npt.ArrayLike | float):
     Returns:
         #TODO
     """
-
     center = np.atleast_1d(center)
     ndim = len(center)
     k = value_to_vector(k, ndim)
@@ -45,7 +45,6 @@ def gaussian_potential(center: npt.ArrayLike | float, width: npt.ArrayLike | flo
     Returns:
         #TODO
     """
-
     center = np.atleast_1d(center)
     ndim = len(center)
     width = value_to_vector(width, ndim)

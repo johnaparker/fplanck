@@ -1,8 +1,8 @@
 """Pre-defined convenience force functions."""
 
 import numpy as np
-from scipy.interpolate import RegularGridInterpolator
 import numpy.typing as npt
+from scipy.interpolate import RegularGridInterpolator
 
 
 def force_from_data(grid: npt.ArrayLike, data: npt.ArrayLike) -> npt.ArrayLike:

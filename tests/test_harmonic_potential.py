@@ -1,13 +1,12 @@
-import pytest
+import numpy as np
+
 from fplanck import (
     FokkerPlanck,
     boundary,
-    k,
     delta_function,
+    k,
     potential_from_data,
-    force_from_data,
 )
-import numpy as np
 
 K = 1
 U = lambda x: 0.5 * K * x**2
@@ -71,7 +70,7 @@ def test_harmonic_1d_finite_time(plot=False):
 
 
 def test_harmonic_1d_time_limit():
-    """propagating by a large amount of time should yield the same solution as the steady-state"""
+    """Propagating by a large amount of time should yield the same solution as the steady-state"""
     sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
@@ -91,7 +90,7 @@ def test_harmonic_1d_time_limit():
 
 
 def test_harmonic_1d_force_potential():
-    """specifying the force should be identical to specifying the potential"""
+    """Specifying the force should be identical to specifying the potential"""
     sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
@@ -123,7 +122,7 @@ def test_harmonic_1d_force_potential():
 
 
 def test_potential_from_data():
-    """the harmonic oscillator obtained from potential data vs. from functional"""
+    """The harmonic oscillator obtained from potential data vs. from functional"""
     sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
@@ -155,7 +154,7 @@ def test_potential_from_data():
 
 
 def test_force_from_data():
-    """the harmonic oscillator obtained from force data vs. from functional"""
+    """The harmonic oscillator obtained from force data vs. from functional"""
     sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,

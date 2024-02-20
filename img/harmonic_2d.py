@@ -1,8 +1,9 @@
-from my_pytools.my_matplotlib.animation import save_animation
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.animation import FuncAnimation
+from my_pytools.my_matplotlib.animation import save_animation
+
 from fplanck import FokkerPlanck, boundary, gaussian_pdf, harmonic_potential
 
 mpl.rc("font", size=15)

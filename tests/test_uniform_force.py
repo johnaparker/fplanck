@@ -1,10 +1,10 @@
-import pytest
-from fplanck import FokkerPlanck, boundary, k
 import numpy as np
+
+from fplanck import FokkerPlanck, boundary, k
 
 
 def test_uniform_periodic():
-    """solution in a uniform force field with periodic boundary conditions"""
+    """Solution in a uniform force field with periodic boundary conditions"""
     F = lambda x: np.ones_like(x)
     sim = FokkerPlanck(
         temperature=1 / k,

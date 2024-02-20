@@ -1,8 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.animation import FuncAnimation
-from fplanck.solver import FokkerPlanck
+
 from fplanck.functions import gaussian_pdf
+from fplanck.solver import FokkerPlanck
 from fplanck.utility import boundary
 
 nm = 1e-9
