@@ -1,11 +1,13 @@
 import numpy as np
+from scipy.constants import k
 
-from fplanck import FokkerPlanck, boundary, k
+from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
 
 
 def test_uniform_1d_steady_state():
     """The steady state solution should be uniform in 1D."""
-    sim = FokkerPlanck(temperature=1 / k, drag=1, extent=1, resolution=0.1, boundary=boundary.periodic)
+    sim = FokkerPlanck(temperature=1 / k, drag=1, extent=1, resolution=0.1, boundary=Boundary.PERIODIC)
 
     steady = sim.steady_state()
     dp = np.gradient(steady)
@@ -21,7 +23,7 @@ def test_uniform_2d_steady_state():
         drag=1,
         extent=[1, 1],
         resolution=0.1,
-        boundary=boundary.periodic,
+        boundary=Boundary.PERIODIC,
     )
 
     steady = sim.steady_state()

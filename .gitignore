@@ -13,3 +13,6 @@ play/
 *.log
 *.pdf
 *.gz
+
+# llm
+.claude

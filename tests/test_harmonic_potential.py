@@ -1,16 +1,18 @@
 import numpy as np
+from scipy.constants import k
 
-from fplanck import (
-    FokkerPlanck,
-    boundary,
-    delta_function,
-    k,
-    potential_from_data,
-)
+from fplanck.functions import delta_function
+from fplanck.potentials import potential_from_data
+from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
 
 K = 1
+
+
 def U(x):
     return 0.5 * K * x**2
+
+
 def F(x):
     return -K * x
 
@@ -22,7 +24,7 @@ def test_harmonic_1d_steady_state(plot=False):
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         potential=U,
     )
 
@@ -48,7 +50,7 @@ def test_harmonic_1d_finite_time(plot=False):
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         potential=U,
     )
 
@@ -78,7 +80,7 @@ def test_harmonic_1d_time_limit():
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         potential=U,
     )
 
@@ -98,7 +100,7 @@ def test_harmonic_1d_force_potential():
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         potential=U,
     )
     sim2 = FokkerPlanck(
@@ -106,7 +108,7 @@ def test_harmonic_1d_force_potential():
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         force=F,
     )
 
@@ -130,7 +132,7 @@ def test_potential_from_data():
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         potential=U,
     )
 
@@ -143,7 +145,7 @@ def test_potential_from_data():
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         potential=newU,
     )
 
@@ -162,7 +164,7 @@ def test_force_from_data():
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         force=F,
     )
 
@@ -175,7 +177,7 @@ def test_force_from_data():
         drag=1,
         extent=10,
         resolution=0.1,
-        boundary=boundary.reflecting,
+        boundary=Boundary.REFLECTING,
         force=newF,
     )
 
