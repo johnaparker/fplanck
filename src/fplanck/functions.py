@@ -1,4 +1,5 @@
 """Pre-defined convenience probability distribution functions."""
+
 from collections.abc import Callable
 from typing import Any
 

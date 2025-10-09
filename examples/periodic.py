@@ -11,7 +11,8 @@ drag = 6 * np.pi * viscosity * radius
 
 L = 20 * nm
 
-U = lambda x: 5e-21 * np.cos(x / L)
+def U(x):
+    return 5e-21 * np.cos(x / L)
 sim = FokkerPlanck(
     temperature=300,
     drag=drag,

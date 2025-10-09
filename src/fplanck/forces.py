@@ -6,7 +6,7 @@ from scipy.interpolate import RegularGridInterpolator
 
 
 def force_from_data(grid: npt.ArrayLike, data: npt.ArrayLike) -> npt.ArrayLike:
-    """Create a force function from data on a grid
+    """Create a force function from data on a grid.
 
     Args:
         grid: list of grid arrays along each dimension

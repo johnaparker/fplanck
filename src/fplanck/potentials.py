@@ -1,5 +1,5 @@
-"""pre-defined convenience potential functions
-"""
+"""pre-defined convenience potential functions."""
+
 from collections.abc import Callable
 
 import numpy as np

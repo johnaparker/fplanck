@@ -31,7 +31,7 @@ def value_to_vector(value: npt.ArrayLike | float, ndim: int, dtype: type = float
 
 # TODO: this function seems questionable
 def slice_idx(i: int, ndim: int, s0) -> tuple:
-    """Return a boolean array for a ndim-1 slice along the i'th axis at value s0"""
+    """Return a boolean array for a ndim-1 slice along the i'th axis at value s0."""
     idx = [slice(None)] * ndim
     idx[i] = s0
 

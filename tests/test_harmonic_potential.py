@@ -9,12 +9,14 @@ from fplanck import (
 )
 
 K = 1
-U = lambda x: 0.5 * K * x**2
-F = lambda x: -K * x
+def U(x):
+    return 0.5 * K * x**2
+def F(x):
+    return -K * x
 
 
 def test_harmonic_1d_steady_state(plot=False):
-    """1D harmonic oscillator steady-state compared to analytic solution"""
+    """1D harmonic oscillator steady-state compared to analytic solution."""
     sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
@@ -40,7 +42,7 @@ def test_harmonic_1d_steady_state(plot=False):
 
 
 def test_harmonic_1d_finite_time(plot=False):
-    """1D harmonic oscillator at finite time compared to analytic solution"""
+    """1D harmonic oscillator at finite time compared to analytic solution."""
     sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
@@ -70,7 +72,7 @@ def test_harmonic_1d_finite_time(plot=False):
 
 
 def test_harmonic_1d_time_limit():
-    """Propagating by a large amount of time should yield the same solution as the steady-state"""
+    """Propagating by a large amount of time should yield the same solution as the steady-state."""
     sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
@@ -90,7 +92,7 @@ def test_harmonic_1d_time_limit():
 
 
 def test_harmonic_1d_force_potential():
-    """Specifying the force should be identical to specifying the potential"""
+    """Specifying the force should be identical to specifying the potential."""
     sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
@@ -122,7 +124,7 @@ def test_harmonic_1d_force_potential():
 
 
 def test_potential_from_data():
-    """The harmonic oscillator obtained from potential data vs. from functional"""
+    """The harmonic oscillator obtained from potential data vs. from functional."""
     sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
@@ -154,7 +156,7 @@ def test_potential_from_data():
 
 
 def test_force_from_data():
-    """The harmonic oscillator obtained from force data vs. from functional"""
+    """The harmonic oscillator obtained from force data vs. from functional."""
     sim1 = FokkerPlanck(
         temperature=1 / k,
         drag=1,
