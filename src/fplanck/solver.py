@@ -7,7 +7,6 @@ import numpy.typing as npt
 from scipy import constants, sparse
 from scipy.sparse.linalg import eigs, expm, expm_multiply
 
-import fplanck
 from fplanck.utility import Boundary, slice_idx, value_to_vector
 
 
@@ -65,7 +64,7 @@ class FokkerPlanck:
             self.drag[...] = drag(*self.grid)
         elif np.isscalar(drag):
             self.drag[...] = drag
-        elif isinstance(drag, Iterable) and len(drag) == self.ndim:
+        elif isinstance(drag, Iterable) and len(drag) == self.ndim:  # ty: ignore[invalid-argument-type]
             for i in range(self.ndim):
                 self.drag[i] = drag[i]
         else:
@@ -104,13 +103,13 @@ class FokkerPlanck:
                 self.Lt[i] = self.diffusion[i] / self.resolution[i] ** 2
 
         for i in range(self.ndim):
-            if self.boundary[i] == fplanck.boundary.reflecting:
+            if self.boundary[i] == Boundary.REFLECTING:
                 idx = slice_idx(i, self.ndim, -1)
                 self.Rt[i][idx] = 0
 
                 idx = slice_idx(i, self.ndim, 0)
                 self.Lt[i][idx] = 0
-            elif self.boundary[i] == fplanck.boundary.periodic:
+            elif self.boundary[i] == Boundary.PERIODIC:
                 idx = slice_idx(i, self.ndim, -1)
                 dU = -self.force_values[i][idx] * self.resolution[i]
                 self.Rt[i][idx] = self.diffusion[i][idx] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
@@ -125,7 +124,7 @@ class FokkerPlanck:
 
     def _build_matrix(self):
         """Build master equation matrix."""
-        N = np.product(self.Ngrid)
+        N = np.prod(self.Ngrid)
 
         size = N * (1 + 2 * self.ndim)
         data = np.zeros(size, dtype=float)
@@ -205,7 +204,7 @@ class FokkerPlanck:
         Nsteps: int | None = None,
         dt: float | None = None,
         normalize: bool = True,
-    ) -> float:
+    ) -> tuple[npt.NDArray, npt.NDArray]:
         """Propagate an initial probability distribution over a time interval.
 
         Args:

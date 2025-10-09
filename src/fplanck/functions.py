@@ -23,7 +23,7 @@ def delta_function(r0: npt.ArrayLike) -> npt.ArrayLike:
     def pdf(*args):
         values = np.zeros_like(args[0])
 
-        diff = sum([(r0[i] - args[i]) ** 2 for i in range(len(args))])
+        diff = np.sum(np.array([(r0[i] - args[i]) ** 2 for i in range(len(args))]), axis=0)
         idx = np.unravel_index(np.argmin(diff), diff.shape)
         values[idx] = 1
 

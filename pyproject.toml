@@ -53,3 +53,9 @@ convention = "google"
 "tests/**" = ["D103", "D100"]
 "img/**" = ["ALL"]
 "examples/**" = ["D100", "D103", "ARG001"]
+
+[tool.ty.src]
+exclude = [
+    "img/**"
+]
+

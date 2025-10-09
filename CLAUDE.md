@@ -16,6 +16,9 @@ This project uses `uv` for package and dependency management:
 - **Lint with ruff**: `uv run ruff check .`
 - **Format with ruff**: `uv run ruff format .`
 - **Auto-fix linting issues**: `uv run ruff check --fix .`
+- **Type check with ty**: `ty check src`
+  - Disable specific type checking rules inline with comments: `# ty: ignore[unsupported-operator]`
+    - This is useful for types that are difficult to handle (e.g., many numpy, pandas types)
 
 The project uses pre-commit hooks (ruff linter and formatter). When developing, ensure ruff formatting and linting passes before committing.
 
