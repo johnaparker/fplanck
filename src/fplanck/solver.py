@@ -23,6 +23,9 @@ class FokkerPlanck:
         boundary: type of boundary condition (scalar or vector, default: reflecting)
     """
 
+    # Maximum value for exponent arguments to prevent overflow
+    _MAX_EXPONENT = 100.0
+
     def __init__(
         self,
         *,
@@ -81,10 +84,12 @@ class FokkerPlanck:
 
             for i in range(self.ndim):
                 dU = np.roll(U, -1, axis=i) - U
-                self.Rt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
+                exponent = np.clip(-self.beta[i] * dU / 2, -self._MAX_EXPONENT, self._MAX_EXPONENT)
+                self.Rt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(exponent)
 
                 dU = np.roll(U, 1, axis=i) - U
-                self.Lt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
+                exponent = np.clip(-self.beta[i] * dU / 2, -self._MAX_EXPONENT, self._MAX_EXPONENT)
+                self.Lt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(exponent)
 
         if self.force is not None:
             F = np.atleast_2d(self.force(*self.grid))
@@ -92,10 +97,12 @@ class FokkerPlanck:
 
             for i in range(self.ndim):
                 dU = -(np.roll(F[i], -1, axis=i) + F[i]) / 2 * self.resolution[i]
-                self.Rt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
+                exponent = np.clip(-self.beta[i] * dU / 2, -self._MAX_EXPONENT, self._MAX_EXPONENT)
+                self.Rt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(exponent)
 
                 dU = (np.roll(F[i], 1, axis=i) + F[i]) / 2 * self.resolution[i]
-                self.Lt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
+                exponent = np.clip(-self.beta[i] * dU / 2, -self._MAX_EXPONENT, self._MAX_EXPONENT)
+                self.Lt[i] += self.diffusion[i] / self.resolution[i] ** 2 * np.exp(exponent)
 
         if self.force is None and self.potential is None:
             for i in range(self.ndim):
@@ -112,11 +119,13 @@ class FokkerPlanck:
             elif self.boundary[i] == Boundary.PERIODIC:
                 idx = slice_idx(i, self.ndim, -1)
                 dU = -self.force_values[i][idx] * self.resolution[i]
-                self.Rt[i][idx] = self.diffusion[i][idx] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
+                exponent = np.clip(-self.beta[i] * dU / 2, -self._MAX_EXPONENT, self._MAX_EXPONENT)
+                self.Rt[i][idx] = self.diffusion[i][idx] / self.resolution[i] ** 2 * np.exp(exponent)
 
                 idx = slice_idx(i, self.ndim, 0)
                 dU = self.force_values[i][idx] * self.resolution[i]
-                self.Lt[i][idx] = self.diffusion[i][idx] / self.resolution[i] ** 2 * np.exp(-self.beta[i] * dU / 2)
+                exponent = np.clip(-self.beta[i] * dU / 2, -self._MAX_EXPONENT, self._MAX_EXPONENT)
+                self.Lt[i][idx] = self.diffusion[i][idx] / self.resolution[i] ** 2 * np.exp(exponent)
             else:
                 raise ValueError(f"'{self.boundary[i]}' is not a valid a boundary condition")
 
@@ -167,8 +176,32 @@ class FokkerPlanck:
 
         Returns:
             steady state vectors
+
+        Raises:
+            RuntimeError: If the master matrix is singular and no steady state exists.
+                This can occur with configurations like uniform force + periodic boundaries.
         """
-        vals, vecs = eigs(self.master_matrix, k=1, sigma=0, which="LM")
+        try:
+            # Try shift-invert mode (sigma=0) to find eigenvalues near zero
+            vals, vecs = eigs(self.master_matrix, k=1, sigma=0, which="LM")
+        except RuntimeError as e:
+            if "singular" in str(e).lower():
+                # Matrix is singular - try finding smallest magnitude eigenvalue without shift-invert
+                try:
+                    vals, vecs = eigs(self.master_matrix, k=2, which="SM")
+                    # Use the eigenvector with the smallest eigenvalue
+                    idx = np.argmin(np.abs(vals))
+                    vecs = vecs[:, idx : idx + 1]
+                except Exception:
+                    # If that also fails, provide a helpful error message
+                    raise RuntimeError(
+                        "Unable to find steady state. This may occur with physically "
+                        "invalid configurations (e.g., uniform force with periodic boundaries "
+                        "has no equilibrium steady state)."
+                    ) from e
+            else:
+                raise
+
         steady = vecs[:, 0].real.reshape(self.Ngrid)
         steady /= np.sum(steady)
 
