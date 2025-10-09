@@ -2,33 +2,30 @@
 name = "fplanck"
 version = "1.0.0"
 description = "Solve the Fokker-Planck equation in N dimensions"
-authors = [
-    { name = "John Parker", email = "japarker@uchicago.edu" }
-]
 readme = "README.md"
+authors = [
+    { name = "John Parker", email = "johnaparker@users.noreply.github.com" }
+]
 requires-python = ">=3.12.0"
-license = { text = "MIT" }
 dependencies = [
-    "numpy>=1.26.2",
-    "scipy>=1.11.4",
-    "matplotlib>=3.8.2",
+    "numpy>=2.3.3",
+    "pandas>=2.3.3",
+    "scipy>=1.16.2",
 ]
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.9.0,<0.10.0"]
+build-backend = "uv_build"
 
-[tool.rye]
-managed = true
-dev-dependencies = [
-    "pytest>=7.4.3",
-    "pre-commit>=3.5.0",
-    "pyright>=1.1.336",
-    "ruff>=0.1.6",
+[dependency-groups]
+dev = [
+    "matplotlib>=3.10.7",
+    "pandas-stubs>=2.3.2.250926",
+    "pre-commit>=4.3.0",
+    "pytest>=8.4.2",
+    "ruff>=0.14.0",
+    "ty>=0.0.1a21",
 ]
-
-[tool.hatch.metadata]
-allow-direct-references = true
 
 [tool.ruff]
 line-length = 120
@@ -38,9 +35,12 @@ extend-select = [
     "E", "F", "B", "UP",
     "D", 
     "I001",
+    "N",
+    "ARG",
 ]
 ignore = [
-    "D107" # __init__ docstring
+    "D107", # __init__ docstring
+    "N806", # lowercase variables
 ]
 
 [tool.ruff.lint.pydocstyle]

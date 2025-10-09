@@ -15,7 +15,7 @@ class FokkerPlanck:
     """Class to manage solving the Fokker-Planck equation.
 
     Attrs:
-        temperature: temperaturef the surrounding bath (scalar or vector)
+        temperature: temperature the surrounding bath (scalar or vector)
         drag: drag coefficient (scalar or vector or function)
         extent: extent (size) of the grid (vector)
         resolution: spatial resolution of the grid (scalar or vector)
@@ -185,7 +185,7 @@ class FokkerPlanck:
             dense: if True, use dense method of expm (might be faster, at memory cost)
 
         Returns:
-            proability function at later time
+            probability function at later time
         """
         p0 = initial(*self.grid)
         if normalize:
@@ -211,8 +211,8 @@ class FokkerPlanck:
         Args:
             initial: initial probability density function
             tf: stop time (inclusive)
-            Nsteps: number of time-steps (specifiy Nsteps or dt)
-            dt: length of time-steps (specifiy Nsteps or dt)
+            Nsteps: number of time-steps (specify Nsteps or dt)
+            dt: length of time-steps (specify Nsteps or dt)
             normalize: if True, normalize the initial probability
 
         Returns:
@@ -227,16 +227,13 @@ class FokkerPlanck:
         elif dt is not None:
             Nsteps = np.ceil(tf / dt).astype(int)
         else:
-            raise ValueError("specifiy either Nsteps or Nsteps")
+            raise ValueError("specify either Nsteps or Nsteps")
 
         time = np.linspace(0, tf, Nsteps)
         pf = expm_multiply(
             self.master_matrix,
             p0.flatten(),
             start=0,
-            stop=tf,
-            num=Nsteps,
-            endpoint=True,
         )
         return time, pf.reshape((pf.shape[0],) + tuple(self.Ngrid))
 

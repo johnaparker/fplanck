@@ -1,18 +1,18 @@
 import numpy as np
 
-from fplanck import FokkerPlanck, boundary, k
+from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
 
 
-def test_uniform_periodic():
-    """Solution in a uniform force field with periodic boundary conditions"""
-    F = lambda x: np.ones_like(x)
+def testuniform_periodic():
+    """Solution in a uniform force field with periodic boundary conditions."""
     sim = FokkerPlanck(
         temperature=1 / k,
         drag=1,
         extent=1,
         resolution=0.05,
-        boundary=boundary.periodic,
-        force=F,
+        boundary=Boundary.PERIODIC,
+        force=lambda x: np.ones_like(x),
     )
 
     steady = sim.steady_state()
