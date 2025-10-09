@@ -7,7 +7,7 @@ from fplanck.utility import Boundary
 def testuniform_periodic():
     """Solution in a uniform force field with periodic boundary conditions."""
     sim = FokkerPlanck(
-        temperature=1 / k,
+        temperature=1,
         drag=1,
         extent=1,
         resolution=0.05,

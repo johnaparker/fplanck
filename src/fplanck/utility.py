@@ -12,6 +12,7 @@ def value_to_vector(value: npt.ArrayLike | float, ndim: int, dtype: type = float
     """Convert a value to a n-dimensional vector.
 
     Args:
+        value: scalar or array-like value to convert to vector
         ndim: number if dimensions in target vector
         dtype: type of target vector array
 

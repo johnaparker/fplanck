@@ -1,2 +1,1 @@
-def hello() -> str:
-    return "Hello from fplanck!"
+"""FPlanck: Solve the Fokker-Planck equation in N dimensions."""
