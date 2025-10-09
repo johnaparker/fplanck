@@ -56,7 +56,7 @@ ax2 = fig.add_subplot(1, 2, 2)
 
 skip = 5
 idx = np.s_[::skip, ::skip]
-im = ax2.pcolormesh(*sim.grid / nm, p0, vmax=np.max(Pt) / 5)
+im = ax2.pcolormesh(*sim.grid / nm, p0[:-1, :-1], vmax=np.max(Pt) / 5)
 current = sim.probability_current(p0)
 arrows = ax2.quiver(
     sim.grid[0][idx] / nm,
