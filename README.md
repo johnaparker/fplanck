@@ -12,30 +12,28 @@ FPlanck is a Python library for numerically solving the Fokker-Planck partial di
 The method is based on the paper *"Physically consistent numerical solver for time-dependent Fokker-Planck equations"* by V. Holubec, K. Kroy, and S. Steffenoni, available on [arXiv](https://arxiv.org/pdf/1804.01285.pdf) and published in [APS](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.99.032117).
 
 ## Features
-+ Can specify an external potential (conservative) and force field (non-conservative) in N-dimensions
++ Declare external potentials (conservative) and force fields (non-conservative) in N-dimensions
 + Solve for the steady-state probability distribution and probability currents
 + Propagate any initial probability distribution to the solution at any later time
 + Periodic and reflecting boundary conditions (can be mixed along different dimensions)
 
 ## Installation
-FPlanck can be installed with pip
 ```shell
 pip install fplanck
 ```
 
 ## Examples
 ![](https://github.com/johnaparker/fplanck/blob/master/img/ratchet.gif)
-![](https://github.com/johnaparker/fplanck/blob/master/img/harmonic.gif)
-
-**On the left**: a single particle in a titled periodic potential with periodic boundary conditions.
+A single particle in a titled periodic potential with periodic boundary conditions.
 The animation shows the time evolution of the probability distribution for the particle location.
 The PDF is driven in the positive direction due to the tilted potential.
 
-**On the right**: a single particle in a 2D harmonic potential.
+![](https://github.com/johnaparker/fplanck/blob/master/img/harmonic.gif)
+A single particle in a 2D harmonic potential.
 The particle is initially away from the center of the harmonic well, and over time is restored to the center.
 
 ## Usage
-See the examples folder for how to use FPlanck.
+See the [examples](src/fplanck/examples) folder for how to use FPlanck.
 
 ## License
 FPlanck is licensed under the terms of the MIT license.
