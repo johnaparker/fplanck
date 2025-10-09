@@ -28,9 +28,9 @@ time, Pt = sim.propagate_interval(pdf, 1e5, Nsteps=Nsteps)
 ### animation
 fig, ax = plt.subplots()
 
-ax.plot(sim.grid[0], steady, color="k", ls="--", alpha=0.5)
-ax.plot(sim.grid[0], p0, color="red", ls="--", alpha=0.3)
-(line,) = ax.plot(sim.grid[0], p0, lw=2, color="C3")
+ax.plot(sim.grid[0], steady, color="k", ls="--", alpha=0.5, label="Steady-state")
+ax.plot(sim.grid[0], p0, color="red", ls="--", alpha=0.3, label="Initial PDF")
+(line,) = ax.plot(sim.grid[0], p0, lw=2, color="C3", label="Time-evolved PDF")
 
 
 def update(i):
