@@ -1,6 +1,6 @@
 [project]
 name = "fplanck"
-version = "1.0.0"
+version = "1.0.1"
 description = "Solve the Fokker-Planck equation in N dimensions"
 readme = "README.md"
 authors = [
