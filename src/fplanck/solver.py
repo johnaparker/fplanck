@@ -233,6 +233,8 @@ class FokkerPlanck:
             self.master_matrix,
             p0.flatten(),
             start=0,
+            stop=tf,
+            num=Nsteps,
         )
         return time, pf.reshape((pf.shape[0],) + tuple(self.Ngrid))
 
