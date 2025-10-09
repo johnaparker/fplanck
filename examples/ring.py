@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 
-from fplanck import FokkerPlanck, boundary, gaussian_pdf
+from fplanck.functions import gaussian_pdf
+from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
 
 nm = 1e-9
 viscosity = 8e-4
@@ -28,8 +30,8 @@ sim = FokkerPlanck(
     drag=drag,
     extent=[800 * nm, 800 * nm],
     resolution=10 * nm,
-    boundary=boundary.reflecting,
-    force=F,
+    boundary=Boundary.REFLECTING,
+    force=F,  # ty: ignore[invalid-argument-type]
 )
 
 ### time-evolved solution
@@ -43,9 +45,9 @@ time, Pt = sim.propagate_interval(pdf, 20e-3, Nsteps=Nsteps)
 fig = plt.figure(figsize=plt.figaspect(1 / 2))
 ax1 = fig.add_subplot(1, 2, 1, projection="3d")
 
-surf = ax1.plot_surface(*sim.grid / nm, p0, cmap="viridis")
+surf = ax1.plot_surface(*sim.grid / nm, p0, cmap="viridis")  # ty: ignore[unresolved-attribute,too-many-positional-arguments]
 
-ax1.set_zlim([0, np.max(Pt) / 5])
+ax1.set_zlim([0, np.max(Pt) / 5])  # ty: ignore[unresolved-attribute]
 ax1.autoscale(False)
 
 ax1.set(xlabel="x (nm)", ylabel="y (nm)", zlabel="normalized PDF")
@@ -65,14 +67,14 @@ arrows = ax2.quiver(
 )
 
 xmax = 400
-ax2.set_xlim([-xmax, xmax])
-ax2.set_ylim([-xmax, xmax])
+ax2.set_xlim([-xmax, xmax])  # ty: ignore[invalid-argument-type]
+ax2.set_ylim([-xmax, xmax])  # ty: ignore[invalid-argument-type]
 
 
 def update(i):
     global surf
     surf.remove()
-    surf = ax1.plot_surface(*sim.grid / nm, Pt[i], cmap="viridis")
+    surf = ax1.plot_surface(*sim.grid / nm, Pt[i], cmap="viridis")  # ty: ignore[unresolved-attribute,possibly-unbound-attribute,too-many-positional-arguments]
 
     data = Pt[i, :-1, :-1]
     im.set_array(np.ravel(data))

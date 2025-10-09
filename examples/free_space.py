@@ -4,7 +4,7 @@ from matplotlib.animation import FuncAnimation
 
 from fplanck.functions import gaussian_pdf
 from fplanck.solver import FokkerPlanck
-from fplanck.utility import boundary
+from fplanck.utility import Boundary
 
 nm = 1e-9
 viscosity = 8e-4
@@ -16,7 +16,7 @@ sim = FokkerPlanck(
     drag=drag,
     extent=200 * nm,
     resolution=5 * nm,
-    boundary=boundary.periodic,
+    boundary=Boundary.PERIODIC,
 )
 
 ### steady-state solution

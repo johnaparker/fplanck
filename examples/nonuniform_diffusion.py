@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-from fplanck import FokkerPlanck, boundary, delta_function
+from fplanck.functions import delta_function
+from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
 
 xc = -5
 
@@ -11,7 +13,7 @@ def drag(x):
     return A * ((x - xc) ** 2)
 
 
-sim = FokkerPlanck(temperature=1, drag=drag, extent=10, resolution=0.05, boundary=boundary.reflecting)
+sim = FokkerPlanck(temperature=1, drag=drag, extent=10, resolution=0.05, boundary=Boundary.REFLECTING)
 
 ### steady-state solution
 steady = sim.steady_state()
@@ -39,7 +41,7 @@ def update(i):
 anim = FuncAnimation(fig, update, frames=range(Nsteps), interval=30)
 ax.set(xlabel="x", ylabel="normalized PDF")
 ax.margins(x=0)
-ax.set_ylim([0, 0.03])
+ax.set_ylim([0, 0.03])  # ty: ignore[invalid-argument-type]
 ax.legend()
 
 plt.show()

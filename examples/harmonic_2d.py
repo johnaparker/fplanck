@@ -2,7 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 
-from fplanck import FokkerPlanck, boundary, gaussian_pdf, harmonic_potential
+from fplanck.functions import gaussian_pdf
+from fplanck.potentials import harmonic_potential
+from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
 
 nm = 1e-9
 viscosity = 8e-4
@@ -15,7 +18,7 @@ sim = FokkerPlanck(
     drag=drag,
     extent=[600 * nm, 600 * nm],
     resolution=10 * nm,
-    boundary=boundary.reflecting,
+    boundary=Boundary.REFLECTING,
     potential=U,
 )
 
@@ -29,16 +32,16 @@ time, Pt = sim.propagate_interval(pdf, 2e-3, Nsteps=Nsteps)
 ### animation
 fig, ax = plt.subplots(subplot_kw=dict(projection="3d"), constrained_layout=True)
 
-surf = ax.plot_surface(*sim.grid / nm, p0, cmap="viridis")
+surf = ax.plot_surface(*sim.grid / nm, p0, cmap="viridis")  # ty: ignore[unresolved-attribute]
 
-ax.set_zlim([0, np.max(Pt) / 3])
+ax.set_zlim([0, np.max(Pt) / 3])  # ty: ignore[unresolved-attribute]
 ax.autoscale(False)
 
 
 def update(i):
     global surf
     surf.remove()
-    surf = ax.plot_surface(*sim.grid / nm, Pt[i], cmap="viridis")
+    surf = ax.plot_surface(*sim.grid / nm, Pt[i], cmap="viridis")  # ty: ignore[unresolved-attribute,possibly-unbound-attribute]
 
     return [surf]
 

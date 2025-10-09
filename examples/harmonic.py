@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 
-from fplanck import boundary, harmonic_potential, uniform_pdf
+from fplanck.functions import uniform_pdf
+from fplanck.potentials import harmonic_potential
 from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
 
 nm = 1e-9
 viscosity = 8e-4
@@ -16,7 +18,7 @@ sim = FokkerPlanck(
     drag=drag,
     extent=600 * nm,
     resolution=10 * nm,
-    boundary=boundary.reflecting,
+    boundary=Boundary.REFLECTING,
     potential=U,
 )
 

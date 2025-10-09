@@ -2,7 +2,7 @@ from functools import partial
 
 import matplotlib.pyplot as plt
 import numpy as np
-import stoked
+import stoked  # ty: ignore[unresolved-import]
 from scipy import constants
 
 nm = 1e-9

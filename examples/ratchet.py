@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 
-from fplanck import FokkerPlanck, boundary, gaussian_pdf
+from fplanck.functions import gaussian_pdf
+from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
 
 nm = 1e-9
 viscosity = 8e-4
@@ -10,15 +12,18 @@ radius = 50 * nm
 drag = 6 * np.pi * viscosity * radius
 
 L = 20 * nm
+
+
 def F(x):
     return 5e-21 * (np.sin(x / L) + 4) / L
+
 
 sim = FokkerPlanck(
     temperature=300,
     drag=drag,
     extent=600 * nm,
     resolution=10 * nm,
-    boundary=boundary.periodic,
+    boundary=Boundary.PERIODIC,
     force=F,
 )
 
