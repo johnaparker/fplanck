@@ -1,0 +1,78 @@
+[project]
+name = "fplanck"
+version = "1.0.2"
+description = "Solve the Fokker-Planck equation in N dimensions"
+readme = "README.md"
+authors = [
+    { name = "John Parker", email = "johnaparker@users.noreply.github.com" }
+]
+requires-python = ">=3.12.0"
+dependencies = [
+    "matplotlib>=3.10.7",
+    "numpy>=2.3.3",
+    "pandas>=2.3.3",
+    "scipy>=1.16.2",
+]
+
+[project.scripts]
+fplanck = "fplanck.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.9.0,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv]
+package = true
+
+[dependency-groups]
+dev = [
+    "pandas-stubs>=2.3.2.250926",
+    "pre-commit>=4.3.0",
+    "pytest>=8.4.2",
+    "ruff>=0.14.0",
+    "twine>=6.2.0",
+    "ty>=0.0.1a21",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = [
+    "E", "F", "B", "UP",
+    "D", 
+    "I001",
+    "N",
+    "ARG",
+]
+ignore = [
+    "D107", # __init__ docstring
+    "N806", # lowercase variables
+    "N802", # ...
+    "N816", # ...
+    "N803" # ...
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D103", "D100"]
+"img/**" = ["ALL"]
+"src/fplanck/examples/**" = ["D100", "D103", "ARG001"]
+
+[tool.ty.src]
+exclude = [
+    "img/**"
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "not_implemented: marks tests as not yet implemented (deselected by default)"
+]
+
+[tool.uv.workspace]
+members = [
+    "tmp",
+]
+

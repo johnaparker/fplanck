@@ -4,6 +4,7 @@ __pycache__
 build/
 dist/
 play/
+.venv/
 
 # latex files
 *.aux
@@ -12,3 +13,6 @@ play/
 *.log
 *.pdf
 *.gz
+
+# llm
+.claude

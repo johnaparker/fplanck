@@ -1,0 +1,51 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.animation import FuncAnimation
+
+from fplanck.functions import gaussian_pdf
+from fplanck.solver import FokkerPlanck
+from fplanck.utility import Boundary
+
+nm = 1e-9
+viscosity = 8e-4
+radius = 50 * nm
+drag = 6 * np.pi * viscosity * radius
+
+sim = FokkerPlanck(
+    temperature=300,
+    drag=drag,
+    extent=200 * nm,
+    resolution=1 * nm,
+    boundary=Boundary.PERIODIC,
+)
+
+### steady-state solution
+steady = sim.steady_state()
+
+### time-evolved solution
+w = 30 * nm
+pdf = gaussian_pdf(0, w)
+p0 = pdf(sim.grid[0])
+
+Nsteps = 200
+time, Pt = sim.propagate_interval(pdf, 1e-3, Nsteps=Nsteps)
+
+### animation
+fig, ax = plt.subplots()
+
+ax.plot(sim.grid[0] / nm, steady, color="k", ls="--", alpha=0.5, label="Steady-state")
+ax.plot(sim.grid[0] / nm, p0, color="red", ls="--", alpha=0.3, label="Initial PDF")
+(line,) = ax.plot(sim.grid[0] / nm, p0, lw=2, color="C3", label="Time-evolved PDF")
+
+
+def update(i):
+    line.set_ydata(Pt[i])
+    return [line]
+
+
+anim = FuncAnimation(fig, update, frames=range(Nsteps), interval=30)
+ax.set(xlabel="x (nm)", ylabel="normalized PDF")
+ax.margins(x=0)
+ax.legend()
+
+plt.show()
