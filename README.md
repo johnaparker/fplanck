@@ -1,12 +1,10 @@
 [![PyPi Version](https://img.shields.io/pypi/v/fplanck)](https://pypi.org/project/fplanck/)
-[![Conda Version](https://img.shields.io/conda/v/japarker/fplanck)](https://anaconda.org/japarker/fplanck)
-[![tests](https://github.com/johnaparker/fplanck/actions/workflows/github-actions-pytest.yml/badge.svg)](https://github.com/johnaparker/fplanck/actions/workflows/github-actions-pytest.yml)
 
 # FPlanck
 FPlanck is a Python library for numerically solving the Fokker-Planck partial differential equation (also known as the Smoluchowski equation) in N dimensions using a matrix numerical method:
 
 <p align="center">
-  <img src="https://github.com/johnaparker/fplanck/blob/master/img/FokkerPlanck.svg">
+  <img src="./img/FokkerPlanck.svg">
 </p>
 
 The method is based on the paper *"Physically consistent numerical solver for time-dependent Fokker-Planck equations"* by V. Holubec, K. Kroy, and S. Steffenoni, available on [arXiv](https://arxiv.org/pdf/1804.01285.pdf) and published in [APS](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.99.032117).
@@ -39,12 +37,15 @@ Run any of the available [examples](src/fplanck/examples) without explicit insta
 
 
 ## Demos
+
 ![](https://github.com/johnaparker/fplanck/blob/master/img/ratchet.gif)
+
 A single particle in a titled periodic potential with periodic boundary conditions.
 The animation shows the time evolution of the probability distribution for the particle location.
 The PDF is driven in the positive direction due to the tilted potential.
 
 ![](https://github.com/johnaparker/fplanck/blob/master/img/harmonic.gif)
+
 A single particle in a 2D harmonic potential.
 The particle is initially away from the center of the harmonic well, and over time is restored to the center.
 
