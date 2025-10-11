@@ -38,13 +38,13 @@ Run any of the available [examples](src/fplanck/examples) without explicit insta
 
 ## Demos
 
-![](https://github.com/johnaparker/fplanck/blob/master/img/ratchet.gif)
+![](./img/ratchet.gif)
 
 A single particle in a titled periodic potential with periodic boundary conditions.
 The animation shows the time evolution of the probability distribution for the particle location.
 The PDF is driven in the positive direction due to the tilted potential.
 
-![](https://github.com/johnaparker/fplanck/blob/master/img/harmonic.gif)
+![](./img/harmonic.gif)
 
 A single particle in a 2D harmonic potential.
 The particle is initially away from the center of the harmonic well, and over time is restored to the center.
