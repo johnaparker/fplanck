@@ -38,16 +38,19 @@ Run any of the available [examples](src/fplanck/examples) without explicit insta
 
 ## Demos
 
-![](./img/ratchet.gif)
+<p align="center">
+  <img src="./img/ratchet.gif" width="500" alt="">
+  <br>
+  <em>A single particle in a titled periodic potential with periodic boundary conditions. The animation shows the time evolution of the probability distribution for the particle location. The PDF is driven in the positive direction due to the tilted potential. </em>
+</p>
 
-A single particle in a titled periodic potential with periodic boundary conditions.
-The animation shows the time evolution of the probability distribution for the particle location.
-The PDF is driven in the positive direction due to the tilted potential.
 
-![](./img/harmonic.gif)
+<p align="center">
+  <img src="./img/harmonic.gif" width="500" alt="">
+  <br>
+  <em>A single particle in a 2D harmonic potential. The particle is initially away from the center of the harmonic well, and over time is restored to the center.</em>
+</p>
 
-A single particle in a 2D harmonic potential.
-The particle is initially away from the center of the harmonic well, and over time is restored to the center.
 
 
 ## License
