@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Parker"
+  given-names: "John"
+  orcid: "https://orcid.org/0000-0001-8157-2403"
+title: "FPlanck"
+version: 1.0.2
+date-released: 2025-10-9
+url: "https://github.com/johnaparker/fplanck"
