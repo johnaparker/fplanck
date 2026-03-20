@@ -1,6 +1,11 @@
-"""FokkerPlanck solver class."""
+from __future__ import annotations
+
+"""
+FokkerPlanck solver class.
+"""
 
 from collections.abc import Callable, Iterable
+from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
@@ -11,46 +16,114 @@ from fplanck.utility import Boundary, slice_idx, value_to_vector
 
 
 class FokkerPlanck:
-    """Class to manage solving the Fokker-Planck equation.
+    """
+    Class to manage solving the Fokker-Planck equation.
 
-    Attrs:
-        temperature: temperature the surrounding bath (scalar or vector)
-        drag: drag coefficient (scalar or vector or function)
-        extent: extent (size) of the grid (vector)
-        resolution: spatial resolution of the grid (scalar or vector)
-        potential: external potential function, U(ndim -> scalar)
-        force: external force function, F(ndim -> ndim)
-        boundary: type of boundary condition (scalar or vector, default: reflecting)
+    Parameters:
+        mode:
+            Input convention for transport parameters.
+
+            - ``"physical"``: use dimensional parameters with
+              ``temperature`` and ``drag``.
+            - ``"dimensionless"``: use scaled parameters with
+              optional ``diffusion`` and no ``temperature`` or ``drag``.
+
+        temperature:
+            Bath temperature in Kelvin in physical mode.
+            Scalar or per-dimension vector.
+
+        drag:
+            Drag coefficient in physical mode.
+            Scalar, per-dimension vector, or callable on the grid.
+
+        diffusion:
+            Dimensionless diffusion coefficient in dimensionless mode.
+            Scalar or per-dimension vector. Defaults to ``1.0``.
+
+        extent:
+            Physical or scaled domain extent by dimension.
+
+        resolution:
+            Physical or scaled grid spacing by dimension.
+
+        potential:
+            External potential function.
+
+            - In physical mode, this is interpreted as a dimensional
+              potential.
+            - In dimensionless mode, this must already be scaled.
+
+        force:
+            External force function.
+
+            - In physical mode, this is interpreted as a dimensional force.
+            - In dimensionless mode, this must already be scaled.
+
+        boundary:
+            Boundary condition type, scalar or per-dimension vector.
     """
 
-    # Maximum value for exponent arguments to prevent overflow
     _MAX_EXPONENT = 100.0
 
     def __init__(
         self,
         *,
-        temperature: npt.ArrayLike | float,
-        drag: npt.ArrayLike | float,
+        mode: Literal["physical", "dimensionless"] = "physical",
+        temperature: npt.ArrayLike | float | None = None,
+        drag: npt.ArrayLike | float | Callable[..., npt.ArrayLike] | None = None,
+        diffusion: npt.ArrayLike | float | None = None,
         extent: npt.ArrayLike,
         resolution: npt.ArrayLike | float,
-        potential: Callable[[npt.ArrayLike], float] | None = None,
-        force: Callable[[npt.ArrayLike], float] | None = None,
-        boundary: Boundary = Boundary.REFLECTING,
-    ):
-        self.extent = np.atleast_1d(extent)
+        potential: Callable[..., npt.ArrayLike] | None = None,
+        force: Callable[..., npt.ArrayLike] | None = None,
+        boundary: Boundary | npt.ArrayLike = Boundary.REFLECTING,
+    ) -> None:
+        self.mode: Literal["physical", "dimensionless"] = mode
+
+        self.extent = np.atleast_1d(np.asarray(extent, dtype=float))
         self.ndim = self.extent.size
 
-        self.temperature = value_to_vector(temperature, self.ndim)
-        self.resolution = value_to_vector(resolution, self.ndim)
+        self.resolution = value_to_vector(resolution, self.ndim).astype(float)
 
         self.potential = potential
         self.force = force
         self.boundary = value_to_vector(boundary, self.ndim, dtype=object)
 
-        self.beta = 1 / (constants.k * self.temperature)
+        if self.mode == "physical":
+            if temperature is None:
+                raise ValueError("temperature is required when mode='physical'")
+            if drag is None:
+                raise ValueError("drag is required when mode='physical'")
+            if diffusion is not None:
+                raise ValueError(
+                    "diffusion must not be provided when mode='physical'; "
+                    "it is derived from temperature and drag"
+                )
 
-        self.Ngrid = np.ceil(self.extent / resolution).astype(int)
-        axes = [np.arange(self.Ngrid[i]) * self.resolution[i] for i in range(self.ndim)]
+            self.temperature = value_to_vector(temperature, self.ndim).astype(float)
+            self.beta = 1.0 / (constants.k * self.temperature)
+
+            self.drag_input = drag
+            self.diffusion_input = None
+
+        elif self.mode == "dimensionless":
+            if temperature is not None:
+                raise ValueError("temperature must not be provided when mode='dimensionless'")
+            if drag is not None:
+                raise ValueError("drag must not be provided when mode='dimensionless'")
+
+            diffusion_value = 1.0 if diffusion is None else diffusion
+            self.temperature = None
+            self.beta = np.ones(self.ndim, dtype=float)
+
+            self.drag_input = None
+            self.diffusion_input = value_to_vector(diffusion_value, self.ndim).astype(float)
+
+        else:
+            raise ValueError("mode must be either 'physical' or 'dimensionless'")
+
+        self.Ngrid = np.ceil(self.extent / self.resolution).astype(int)
+        axes = [np.arange(self.Ngrid[i], dtype=float) * self.resolution[i] for i in range(self.ndim)]
         for axis in axes:
             axis -= np.average(axis)
         self.axes = axes
@@ -61,21 +134,36 @@ class FokkerPlanck:
         self.potential_values = np.zeros_like(self.grid[0])
         self.force_values = np.zeros_like(self.grid)
 
-        self.drag = np.zeros_like(self.grid)
-        self.diffusion = np.zeros_like(self.grid)
-        if callable(drag):
-            self.drag[...] = drag(*self.grid)
-        elif np.isscalar(drag):
-            self.drag[...] = drag
-        elif isinstance(drag, Iterable) and len(drag) == self.ndim:  # ty: ignore[invalid-argument-type]
-            for i in range(self.ndim):
-                self.drag[i] = drag[i]
-        else:
-            raise ValueError(f"drag must be either a scalar, {self.ndim}-dim vector, or a function")
+        self.drag = np.zeros_like(self.grid, dtype=float)
+        self.diffusion = np.zeros_like(self.grid, dtype=float)
 
-        self.mobility = 1 / self.drag
-        for i in range(self.ndim):
-            self.diffusion[i] = constants.k * self.temperature[i] / self.drag[i]
+        if self.mode == "physical":
+            drag_value = self.drag_input
+            if callable(drag_value):
+                self.drag[...] = drag_value(*self.grid)
+            elif np.isscalar(drag_value):
+                self.drag[...] = float(drag_value)
+            elif isinstance(drag_value, Iterable) and len(drag_value) == self.ndim:  # ty: ignore[invalid-argument-type]
+                for i in range(self.ndim):
+                    self.drag[i] = drag_value[i]
+            else:
+                raise ValueError(
+                    f"drag must be either a scalar, {self.ndim}-dim vector, or a function"
+                )
+
+            self.mobility = 1.0 / self.drag
+            for i in range(self.ndim):
+                self.diffusion[i] = constants.k * self.temperature[i] / self.drag[i]
+
+        else:
+            for i in range(self.ndim):
+                self.drag[i] = 1.0
+
+            self.mobility = np.ones_like(self.grid, dtype=float)
+
+            diffusion_value = self.diffusion_input
+            for i in range(self.ndim):
+                self.diffusion[i] = diffusion_value[i]
 
         if self.potential is not None:
             U = self.potential(*self.grid)
