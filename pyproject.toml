@@ -72,8 +72,3 @@ markers = [
     "not_implemented: marks tests as not yet implemented (deselected by default)"
 ]
 
-[tool.uv.workspace]
-members = [
-    "tmp",
-]
-
